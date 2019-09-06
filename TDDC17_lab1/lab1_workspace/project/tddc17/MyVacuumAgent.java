@@ -100,8 +100,12 @@ class MyAgentProgram implements AgentProgram {
 	private Random random_generator = new Random();
 	
 	// Here you can define your variables!
-	public int iterationCounter = 10;
+	public int iterationCounter = 1000;
 	public MyAgentState state = new MyAgentState();
+	private final int UP = 0;
+	private final int RIGHT = 1;
+	private final int DOWN = 2;
+	private final int LEFT = 3;
 	
 	// moves the Agent to a random start position
 	// uses percepts to update the Agent position - only the position, other percepts are ignored
@@ -195,17 +199,85 @@ class MyAgentProgram implements AgentProgram {
 	    } 
 	    else
 	    {
-	    	if (bump)
-	    	{
-	    		state.agent_last_action=state.ACTION_NONE;
-		    	return NoOpAction.NO_OP;
-	    	}
-	    	else
-	    	{
-	    		state.agent_last_action=state.ACTION_MOVE_FORWARD;
-	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-	    	}
+	    	return simple_search(bump);
 	    }
+	}
+	
+	private Action simple_search(Boolean bump) {
+		/*if (bump)
+    	{
+			
+			state.agent_direction = ((state.agent_direction+1) % 4);
+	    	state.agent_last_action=state.ACTION_TURN_RIGHT;
+		    return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+    	}
+    	else
+    	{*/
+    		if (state.world[state.agent_x_position][state.agent_y_position - 1] == state.UNKNOWN) 
+    		{
+    			System.out.println("UP unknown");
+    			if (state.agent_direction == UP)
+    			{
+    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
+    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+    			}
+    			else
+    			{
+    				state.agent_direction = ((state.agent_direction+3) % 4);
+    				state.agent_last_action=state.ACTION_TURN_LEFT;
+    				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+    			}
+    		}
+    		else if (state.world[state.agent_x_position + 1][state.agent_y_position] == state.UNKNOWN)
+    		{
+    			System.out.println("RIGHT unknown");
+    			if (state.agent_direction == RIGHT)
+    			{
+    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
+    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+    			}
+    			else
+    			{
+    				state.agent_direction = ((state.agent_direction+1) % 4);
+    				state.agent_last_action=state.ACTION_TURN_RIGHT;
+    				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+    			}
+    		}
+    		else if (state.world[state.agent_x_position][state.agent_y_position + 1] == state.UNKNOWN)
+    		{
+    			System.out.println("DOWN unknown");
+    			if (state.agent_direction == DOWN)
+    			{
+    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
+    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+    			}
+    			else
+    			{
+    				state.agent_direction = ((state.agent_direction+1) % 4);
+    				state.agent_last_action=state.ACTION_TURN_RIGHT;
+    				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+    			}
+    		}
+    		else if (state.world[state.agent_x_position - 1][state.agent_y_position] == state.UNKNOWN)
+    		{
+    			System.out.println("LEFT unknown");
+    			if (state.agent_direction == LEFT)
+    			{
+    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
+    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+    			}
+    			else
+    			{
+    				state.agent_direction = ((state.agent_direction+3) % 4);
+    				state.agent_last_action=state.ACTION_TURN_LEFT;
+    				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+    			}
+    		}
+    		else
+    		{
+    			return NoOpAction.NO_OP;
+    		}
+    	//}
 	}
 }
 
