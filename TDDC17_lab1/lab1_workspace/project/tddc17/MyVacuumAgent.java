@@ -7,6 +7,7 @@ import aima.core.agent.AgentProgram;
 import aima.core.agent.Percept;
 import aima.core.agent.impl.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 class MyAgentState
@@ -40,6 +41,7 @@ class MyAgentState
 			for (int j=0; j < world[i].length ; j++)
 				world[i][j] = UNKNOWN;
 		world[1][1] = HOME;
+		world[0][0] = WALL;
 		agent_last_action = ACTION_NONE;
 	}
 	// Based on the last action and the received percept updates the x & y agent position
@@ -96,16 +98,31 @@ class MyAgentState
 
 class MyAgentProgram implements AgentProgram {
 
-	private int initnialRandomActions = 10;
+	private int initnialRandomActions = 0;
 	private Random random_generator = new Random();
 	
 	// Here you can define your variables!
-	public int iterationCounter = 1000;
+	public int iterationCounter = 30 * 30 * 2;
 	public MyAgentState state = new MyAgentState();
-	private final int UP = 0;
-	private final int RIGHT = 1;
-	private final int DOWN = 2;
-	private final int LEFT = 3;
+	private final int NORTH = 0;
+	private final int EAST = 1;
+	private final int SOUTH = 2;
+	private final int WEST = 3;
+	private int max_x = 0;
+	private int max_y = 0;
+	private boolean is_going_home = false;
+	ArrayList<Integer> task_list = new ArrayList<Integer>();
+	
+	private class Coordinates {
+		private int x;
+		private int y;
+		
+		Coordinates(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
 	
 	// moves the Agent to a random start position
 	// uses percepts to update the Agent position - only the position, other percepts are ignored
@@ -199,85 +216,194 @@ class MyAgentProgram implements AgentProgram {
 	    } 
 	    else
 	    {
-	    	return simple_search(bump);
+	    	if (task_list.size() == 0 && is_going_home)
+	    	{
+	    		return NoOpAction.NO_OP;
+	    	}
+	    	else 
+	    	{
+	    		if (bump && (max_x  == 0 || max_y == 0)) 
+		    	{
+		    		if (state.agent_x_position > 0 && state.agent_y_position > 0)
+		    		{
+		    			if (state.agent_direction == EAST)
+		    			{
+		    				max_x = state.agent_x_position;
+		    				for (int i = max_x + 1; i < state.world.length; i++) 
+		    				{
+		    					for (int j = 0; j < state.world.length; j++)
+		    						state.world[i][j] = state.WALL;
+		    				}
+		    			}
+		    			if (state.agent_direction == SOUTH)
+		    			{
+		    				max_y = state.agent_y_position;
+		    				for (int i = 0; i < state.world.length; i++) 
+		    				{
+		    					for (int j = max_y + 1; j < state.world.length; j++)
+		    						state.world[i][j] = state.WALL;
+		    				}
+		    			}
+		    				
+		    		}
+		    	}
+	    		if (task_list.size() == 0)
+	    		{
+	    			generate_tasks();
+	    		}
+	    		return perform_task();
+	    	}
 	    }
 	}
 	
-	private Action simple_search(Boolean bump) {
-		/*if (bump)
-    	{
-			
-			state.agent_direction = ((state.agent_direction+1) % 4);
-	    	state.agent_last_action=state.ACTION_TURN_RIGHT;
-		    return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-    	}
-    	else
-    	{*/
-    		if (state.world[state.agent_x_position][state.agent_y_position - 1] == state.UNKNOWN) 
-    		{
-    			System.out.println("UP unknown");
-    			if (state.agent_direction == UP)
-    			{
-    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
-    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-    			}
-    			else
-    			{
-    				state.agent_direction = ((state.agent_direction+3) % 4);
-    				state.agent_last_action=state.ACTION_TURN_LEFT;
-    				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-    			}
-    		}
-    		else if (state.world[state.agent_x_position + 1][state.agent_y_position] == state.UNKNOWN)
-    		{
-    			System.out.println("RIGHT unknown");
-    			if (state.agent_direction == RIGHT)
-    			{
-    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
-    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-    			}
-    			else
-    			{
-    				state.agent_direction = ((state.agent_direction+1) % 4);
-    				state.agent_last_action=state.ACTION_TURN_RIGHT;
-    				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-    			}
-    		}
-    		else if (state.world[state.agent_x_position][state.agent_y_position + 1] == state.UNKNOWN)
-    		{
-    			System.out.println("DOWN unknown");
-    			if (state.agent_direction == DOWN)
-    			{
-    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
-    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-    			}
-    			else
-    			{
-    				state.agent_direction = ((state.agent_direction+1) % 4);
-    				state.agent_last_action=state.ACTION_TURN_RIGHT;
-    				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-    			}
-    		}
-    		else if (state.world[state.agent_x_position - 1][state.agent_y_position] == state.UNKNOWN)
-    		{
-    			System.out.println("LEFT unknown");
-    			if (state.agent_direction == LEFT)
-    			{
-    				state.agent_last_action=state.ACTION_MOVE_FORWARD;
-    	    		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-    			}
-    			else
-    			{
-    				state.agent_direction = ((state.agent_direction+3) % 4);
-    				state.agent_last_action=state.ACTION_TURN_LEFT;
-    				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-    			}
-    		}
-    		else
-    		{
-    			return NoOpAction.NO_OP;
-    		}
-    	//}
+	private void generate_tasks() 
+	{
+		Coordinates closest_pos = find_closest_unknown_position();
+		if (closest_pos.x == 1 && closest_pos.y == 1)
+			is_going_home = true;
+		System.out.println("Closest_pos.x: " + closest_pos.x + " closest_pos.y: " + closest_pos.y);
+		int y_direction = generate_y_tasks(closest_pos);
+		generate_x_tasks(y_direction, closest_pos);
+	}
+	
+	private int generate_y_tasks(Coordinates closest_pos)
+	{
+		int y_direction = -1;
+		if (closest_pos.y > state.agent_y_position)
+		{
+			y_direction = SOUTH;
+			if (state.agent_direction == EAST) 
+				task_list.add(state.ACTION_TURN_RIGHT);
+			else if (state.agent_direction == WEST) 
+				task_list.add(state.ACTION_TURN_LEFT);
+			else if (state.agent_direction == NORTH) 
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					task_list.add(state.ACTION_TURN_LEFT);
+				}
+				
+			}
+		}
+		else if (closest_pos.y < state.agent_y_position)
+		{
+			y_direction = NORTH;
+			if (state.agent_direction == EAST) 
+				task_list.add(state.ACTION_TURN_LEFT);
+			else if (state.agent_direction == WEST) 
+				task_list.add(state.ACTION_TURN_RIGHT);
+			else if (state.agent_direction == SOUTH) 
+			{
+				for (int i = 0; i < 2; i++)
+					task_list.add(state.ACTION_TURN_LEFT);
+			}
+		}
+		
+		for (int i = 0; i < Math.abs(closest_pos.y - state.agent_y_position); i++)
+			task_list.add(state.ACTION_MOVE_FORWARD);
+		
+		return y_direction;
+	}
+	
+	private void generate_x_tasks(int y_direction, Coordinates closest_pos)
+	{
+		if (closest_pos.x > state.agent_x_position)
+		{
+			if (y_direction == NORTH)
+				task_list.add(state.ACTION_TURN_RIGHT);
+			else if (y_direction == SOUTH)
+				task_list.add(state.ACTION_TURN_LEFT);
+			else if (state.agent_direction == NORTH) 
+				task_list.add(state.ACTION_TURN_RIGHT);
+			else if (state.agent_direction == WEST) 
+			{
+				for (int i = 0; i < 2; i++)
+					task_list.add(state.ACTION_TURN_LEFT);
+			}
+			else if (state.agent_direction == SOUTH) 
+				task_list.add(state.ACTION_TURN_LEFT);
+		}
+		else if (closest_pos.x < state.agent_x_position) 
+		{
+			if (y_direction == NORTH)
+				task_list.add(state.ACTION_TURN_LEFT);
+			else if (y_direction == SOUTH)
+				task_list.add(state.ACTION_TURN_RIGHT);
+			else if (state.agent_direction == NORTH) 
+				task_list.add(state.ACTION_TURN_LEFT);
+			else if (state.agent_direction == EAST) 
+			{
+				for (int i = 0; i < 2; i++)
+					task_list.add(state.ACTION_TURN_LEFT);
+			}
+			else if (state.agent_direction == SOUTH) 
+				task_list.add(state.ACTION_TURN_RIGHT);
+		}
+		
+		for (int i = 0; i < Math.abs(closest_pos.x - state.agent_x_position); i++)
+			task_list.add(state.ACTION_MOVE_FORWARD);
+	}
+	
+	private Coordinates find_closest_unknown_position() 
+	{
+		int min_distance = 20 * 2;
+		int x = 1;
+		int y = 1;
+		for (int i = 0; i < state.world.length; i++)
+		{
+			for (int j = 0; j < state.world.length; j++)
+			{
+				if (state.world[i][j] == state.UNKNOWN)
+				{
+					int x_diff = Math.abs(i - state.agent_x_position);
+					int y_diff = Math.abs(j - state.agent_y_position);
+					
+					if (x_diff + y_diff < min_distance)
+					{
+						min_distance = x_diff + y_diff;
+						x = i;
+						y = j;
+					}
+				}
+			}
+		}
+		return new Coordinates(x, y);
+	}
+	
+	private Action perform_task() 
+	{
+		for (int i = 0; i < task_list.size(); i++) 
+		{
+			System.out.println("task " + i + ": " + task_list.get(i));
+		}
+		int action = task_list.get(0);
+		task_list.remove(0);
+		if (action == state.ACTION_MOVE_FORWARD)
+			return move_forward();
+		else if (action == state.ACTION_TURN_RIGHT)
+			return turn_right();
+		else
+			return turn_left();
+	}
+	
+	private Action move_forward()
+	{
+		state.agent_last_action=state.ACTION_MOVE_FORWARD;
+		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+	}
+	
+	private Action turn_left()
+	{
+		state.agent_direction = ((state.agent_direction+3) % 4);
+		state.agent_last_action=state.ACTION_TURN_LEFT;
+		return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+	}
+	
+	private Action turn_right()
+	{
+		state.agent_direction = ((state.agent_direction+1) % 4);
+		state.agent_last_action=state.ACTION_TURN_RIGHT;
+		return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
 	}
 }
 
