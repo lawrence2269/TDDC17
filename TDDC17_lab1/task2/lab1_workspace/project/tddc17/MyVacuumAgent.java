@@ -6,11 +6,10 @@ import aima.core.agent.AgentProgram;
 import aima.core.agent.Percept;
 import aima.core.agent.impl.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
+import java.util.Map;
 
 class MyAgentState
 {
@@ -104,175 +103,215 @@ class MyAgentProgram implements AgentProgram {
 
 	// Here you can define your variables!
 	public MyAgentState state = new MyAgentState();
-	private Queue<Integer> actions = new LinkedList<Integer>();
-	private ArrayList<Coordinates> path = new ArrayList<Coordinates>();
+	private LinkedList<Action> actions = new LinkedList<Action>();
+	private LinkedList<Tile> path = new LinkedList<Tile>();
 	private boolean is_going_home = false;
 	public int iterationCounter = state.world.length * state.world[0].length * 2;
 
-	private class Coordinates {
-		// A class that is used to be able to return the x
-		// and y coordinates of a specific position
+	// A class that is used to be able to return the x
+	// and y positions of a specific tile
+	private class Tile {
 		private int x;
 		private int y;
 
-		Coordinates(int x, int y)
+		Tile(int x, int y)
 		{
 			this.x = x;
 			this.y = y;
 		}
+
+		public String toString()
+		{
+			return this.x + " " + this.y;
+		}
+
+		@Override
+		public boolean equals(Object other)
+		{
+			if (other == null) return false;
+			if (other == this) return true;
+			if (!(other instanceof Tile)) return false;
+			
+			Tile coord = (Tile)other;
+			return this.x == coord.x && this.y == coord.y;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			int hash = 7;  
+			hash = 31 * hash + x;
+			hash = 31 * hash + y;
+			return hash;
+		}
 	}
 
+	// takes the first action and executes it
+	private Action perform_action()
+	{
+		Action action = this.actions.removeFirst();
+		
+		if (action == LIUVacuumEnvironment.ACTION_TURN_RIGHT) return turn_right();
+		else if (action == LIUVacuumEnvironment.ACTION_TURN_LEFT) return turn_left();
+		else return move_forward();
+	}
+
+	// generates actions depending on the location of the
+	// next tile in the path
 	private void generate_actions()
 	{
-		Coordinates current_node = this.path.remove(0);
+		Tile next_tile = this.path.removeFirst();
 
-		if (current_node.x > state.agent_x_position)
-		{
+		if (next_tile.x > state.agent_x_position)
 			move_east();
-		}
-		else if (current_node.x < state.agent_x_position)
-		{
+		else if (next_tile.x < state.agent_x_position)
 			move_west();
-		}
-		else if (current_node.y < state.agent_y_position)
-		{
+		else if (next_tile.y < state.agent_y_position)
 			move_north();
-		}
-		else if (current_node.y > state.agent_y_position)
-		{
+		else if (next_tile.y > state.agent_y_position)
 			move_south();
-		}
-		this.actions.add(state.ACTION_MOVE_FORWARD);
 	}
 
 	private void move_east()
 	{
-		switch(state.agent_direction)
+		switch (state.agent_direction)
 		{
 			case MyAgentState.SOUTH:
-				this.actions.add(state.ACTION_TURN_LEFT);
-				break;
-			case MyAgentState.NORTH:
-				this.actions.add(state.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.WEST:
-				this.actions.add(state.ACTION_TURN_LEFT);
-				this.actions.add(state.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			case MyAgentState.NORTH:
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			default:
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
 
 	private void move_west()
 	{
-		switch(state.agent_direction)
+		switch (state.agent_direction)
 		{
 			case MyAgentState.SOUTH:
-				this.actions.add(state.ACTION_TURN_RIGHT);
-				break;
-			case MyAgentState.NORTH:
-				this.actions.add(state.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.EAST:
-				this.actions.add(state.ACTION_TURN_LEFT);
-				this.actions.add(state.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			case MyAgentState.NORTH:
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			default:
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
 
 	private void move_north()
 	{
-		switch(state.agent_direction)
+		switch (state.agent_direction)
 		{
 			case MyAgentState.SOUTH:
-				this.actions.add(state.ACTION_TURN_LEFT);
-				this.actions.add(state.ACTION_TURN_LEFT);
-				break;
-			case MyAgentState.EAST:
-				this.actions.add(state.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.WEST:
-				this.actions.add(state.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			case MyAgentState.EAST:
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			default:
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
 
 	private void move_south()
 	{
-		switch(state.agent_direction)
+		switch (state.agent_direction)
 		{
 			case MyAgentState.NORTH:
-				this.actions.add(state.ACTION_TURN_LEFT);
-				this.actions.add(state.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.EAST:
-				this.actions.add(state.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.WEST:
-				this.actions.add(state.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				break;
+			default:
+				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
 
-	// BFS
-	private Boolean find_closest_position(int goal)
+	// BFS for finding the closest tile that has a state of goal
+	private LinkedList<Tile> find_closest_tiles(int goal)
 	{
-		Queue<Coordinates> frontier = new LinkedList<Coordinates>();
-		HashMap<Coordinates, Coordinates> explored = new HashMap<Coordinates, Coordinates>();
-		Coordinates start_node = new Coordinates(state.agent_x_position, state.agent_y_position);
-		frontier.add(start_node);
-		explored.put(start_node, null);
+		LinkedList<Tile> frontier = new LinkedList<Tile>();
+		Map<Tile, Tile> explored = new HashMap<Tile, Tile>();
+		
+		Tile start_tile = new Tile(state.agent_x_position, state.agent_y_position);
+		frontier.add(start_tile);
+		explored.put(start_tile, null);
 
 		while (!frontier.isEmpty())
 		{
-			Coordinates current_node = frontier.remove();
+			Tile curr_tile = frontier.removeFirst();
 
-			if (state.world[current_node.x][current_node.y] == goal)
-				return generate_path(current_node, explored);
+			if (state.world[curr_tile.x][curr_tile.y] == goal)
+				return generate_path(curr_tile, explored);
 
 			for (int dx = -1; dx <= 1; dx++)
 			{
 				for (int dy = -1; dy <= 1; dy++)
 				{
-					Coordinates neighbor = new Coordinates(current_node.x + dx, current_node.y + dy);
-					if ((Math.abs(dx) != Math.abs(dy) && !explored.containsKey(neighbor))
-							&& state.world[neighbor.x][neighbor.y] != state.WALL)
+					Tile neighbor = new Tile(curr_tile.x + dx, curr_tile.y + dy);
+					if (Math.abs(dx) != Math.abs(dy) && !explored.containsKey(neighbor) && state.world[neighbor.x][neighbor.y] != state.WALL)
 					{
-						explored.put(neighbor, current_node);
+						explored.put(neighbor, curr_tile);
 						frontier.add(neighbor);
 					}
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
-	private Boolean generate_path(Coordinates end_node, HashMap<Coordinates, Coordinates> explored)
+	// generates a path to the destination tile using the map
+	private LinkedList<Tile> generate_path(Tile destination, Map<Tile, Tile> explored)
 	{
-		this.path.add(0, end_node);
-		Coordinates current_node = explored.get(end_node);
-		while (current_node != null)
+		LinkedList<Tile> new_path = new LinkedList<Tile>();
+
+		Tile curr_tile = destination;
+		do
 		{
-			this.path.add(0, current_node);
-			current_node = explored.get(current_node);
-		}
-		this.path.remove(0);
-		return !this.path.isEmpty();
-	}
+			new_path.addFirst(curr_tile);
+			curr_tile = explored.get(curr_tile);
+		} while (curr_tile != null);
 
-	private Action perform_action()
-	{
-		// pickup an action from the list and perform it
-		int action = this.actions.remove();
-		if (action == state.ACTION_MOVE_FORWARD)
-			return move_forward();
-		else if (action == state.ACTION_TURN_RIGHT)
-			return turn_right();
-		else if (action == state.ACTION_TURN_LEFT)
-			return turn_left();
-		else
-			System.out.println("Doing nothing");
-			return NoOpAction.NO_OP;
-}
+		new_path.removeFirst();
+		return new_path;
+	}
 
 	private Action move_forward()
 	{
@@ -392,31 +431,27 @@ class MyAgentProgram implements AgentProgram {
 	    	state.agent_last_action=state.ACTION_SUCK;
 	    	return LIUVacuumEnvironment.ACTION_SUCK;
 	    }
-	    else
-	    {
-			if (is_going_home && home)
-			{
-				return NoOpAction.NO_OP;
-			}
+		
+		if (is_going_home && home) return NoOpAction.NO_OP;
 
-	    	if(this.actions.isEmpty() && this.path.isEmpty())
+		if (this.path.isEmpty() && this.actions.isEmpty())
+		{
+			this.path = find_closest_tiles(state.UNKNOWN);
+			if (this.path == null)
 			{
-				if (!find_closest_position(state.UNKNOWN))
+				if (home) return NoOpAction.NO_OP;
+				else 
 				{
-					System.out.println("Going home");
+					this.path = find_closest_tiles(state.HOME);
 					this.is_going_home = true;
-					find_closest_position(state.HOME);
 				}
-				System.out.println("Generated new path");
-				for (int i = 0; i < this.path.size(); i++)
-					System.out.println("path_" + i + "=(" + this.path.get(i).x + "," + this.path.get(i).y + ")");
 			}
+		}
 
-			if (this.actions.isEmpty())
-				generate_actions();
+		if (this.actions.isEmpty()) 
+			generate_actions();
 
-			return perform_action();
-	    }
+		return perform_action();
 	}
 }
 
