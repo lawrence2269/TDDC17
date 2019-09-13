@@ -1,13 +1,12 @@
 package tddc17;
 
-
 import aima.core.environment.liuvacuum.*;
 import aima.core.agent.Action;
 import aima.core.agent.AgentProgram;
 import aima.core.agent.Percept;
 import aima.core.agent.impl.*;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 class MyAgentState
@@ -48,6 +47,7 @@ class MyAgentState
 		world[1][1] = HOME;
 		agent_last_action = ACTION_NONE;
 	}
+
 	// Based on the last action and the received percept updates the x & y agent position
 	public void updatePosition(DynamicPercept p)
 	{
@@ -70,7 +70,6 @@ class MyAgentState
 				break;
 			}
 	    }
-		
 	}
 	
 	public void updateWorld(int x_position, int y_position, int info)
@@ -106,20 +105,17 @@ class MyAgentProgram implements AgentProgram {
 	private Random random_generator = new Random();
 	
 	// Here you can define your variables!
-	public int iterationCounter = 20 * 20 * 2;
 	public MyAgentState state = new MyAgentState();
-	private int max_x = 0;
-	private int max_y = 0;
 	private boolean is_going_home = false;
-	ArrayList<Integer> action_list = new ArrayList<Integer>();
+	LinkedList<Action> action_list = new LinkedList<Action>();
+	public int iterationCounter = state.world.length * state.world[0].length * 2;
 	
-	private class Coordinates {
-		// A class that is used to be able to return the x
-		// and y coordinates of a specific position
+	// a class that is used to define the x and y position of a tile
+	private class Tile {
 		private int x;
 		private int y;
 		
-		Coordinates(int x, int y)
+		Tile(int x, int y)
 		{
 			this.x = x;
 			this.y = y;
@@ -148,7 +144,6 @@ class MyAgentProgram implements AgentProgram {
 		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	}
 	
-	
 	@Override
 	public Action execute(Percept percept) {
 		
@@ -170,7 +165,6 @@ class MyAgentProgram implements AgentProgram {
     	System.out.println("x=" + state.agent_x_position);
     	System.out.println("y=" + state.agent_y_position);
     	System.out.println("dir=" + state.agent_direction);
-    	
 		
 	    iterationCounter--;
 	    
@@ -200,209 +194,239 @@ class MyAgentProgram implements AgentProgram {
 				state.updateWorld(state.agent_x_position-1,state.agent_y_position,state.WALL);
 				break;
 			}
-	    }
-	    if (dirt)
-	    	state.updateWorld(state.agent_x_position,state.agent_y_position,state.DIRT);
-	    // verify that we do not overwrite the home position
-	    else if (state.world[state.agent_x_position][state.agent_y_position] != state.HOME)
-	    	state.updateWorld(state.agent_x_position,state.agent_y_position,state.CLEAR);
-	    
+		}
+
+		// verify that we do not overwrite the home position
+		if (state.world[state.agent_x_position][state.agent_y_position] != state.HOME)
+		{
+			if (dirt)
+				state.updateWorld(state.agent_x_position,state.agent_y_position,state.DIRT);
+			else
+				state.updateWorld(state.agent_x_position,state.agent_y_position,state.CLEAR);
+		}
 	    state.printWorldDebug();
 	    
 	    
-	    // Next action selection based on the percept value
+	    // prioritize sucking dirt
 	    if (dirt)
 	    {
 	    	System.out.println("DIRT -> choosing SUCK action!");
 	    	state.agent_last_action=state.ACTION_SUCK;
 	    	return LIUVacuumEnvironment.ACTION_SUCK;
 	    } 
-	    else
-	    {
-	    	// stop executing if we do not have any actions to execute
-	    	// and we know that we are done
-	    	if (action_list.size() == 0 && is_going_home)
-	    	{
-	    		return NoOpAction.NO_OP;
-	    	}
-	    	else 
-	    	{
-	    		if (bump)
-	    		{
-	    			// if we bumped and are facing east then we must have found 
-	    			// the east wall, so mark all positions beyond that wall as
-	    			// walls too
-	    			if (state.agent_direction == MyAgentState.EAST)
-	    			{
-	    				for (int i = state.agent_x_position + 1; i < state.world.length; i++) 
-	    				{
-	    					for (int j = 0; j < state.world.length; j++)
-	    						state.world[i][j] = state.WALL;
-	    				}
-	    			}
-	    			// if we bumped and are facing south then we must have found 
-	    			// the south wall, so mark all positions beyond that wall as
-	    			// walls too
-	    			if (state.agent_direction == MyAgentState.SOUTH)
-	    			{
-	    				for (int i = 0; i < state.world.length; i++) 
-	    				{
-	    					for (int j = state.agent_y_position + 1; j < state.world.length; j++)
-	    						state.world[i][j] = state.WALL;
-	    				}
-	    			}	
-		    	}
-	    		// if we do not have any actions to perform,
-	    		// then generate new ones
-	    		if (action_list.size() == 0)
-	    		{
-	    			generate_actions();
-	    		}
-	    		// perform one of the actions in the action list
-	    		return perform_action();
-	    	}
-	    }
+		
+		// stop executing if we do not have any actions to execute
+		// and we know that we are done
+		if (home && is_going_home)
+			return NoOpAction.NO_OP;
+
+		if (bump)
+		{
+			// if we bumped and are facing east then we must have found 
+			// the east wall, so mark all positions beyond that wall as
+			// walls too
+			if (state.agent_direction == MyAgentState.EAST)
+			{
+				for (int i = state.agent_x_position + 1; i < state.world.length; i++) 
+				{
+					for (int j = 0; j < state.world[0].length; j++)
+						state.world[i][j] = state.WALL;
+				}
+			}
+			// if we bumped and are facing south then we must have found 
+			// the south wall, so mark all positions beyond that wall as
+			// walls too
+			if (state.agent_direction == MyAgentState.SOUTH)
+			{
+				for (int i = 0; i < state.world.length; i++) 
+				{
+					for (int j = state.agent_y_position + 1; j < state.world[0].length; j++)
+						state.world[i][j] = state.WALL;
+				}
+			}	
+		}
+
+		// if we do not have any actions to perform, then generate new ones
+		if (action_list.isEmpty())
+			generate_actions();
+
+		return perform_action();
 	}
 	
+	// generates the actions for reaching an unknown tile or the home tile
 	private void generate_actions() 
 	{
-		Coordinates closest_pos = find_closest_unknown_position();
-		// since the default is (1, 1) we can use that to know when
-		// we are supposed to go home
-		if (closest_pos.x == 1 && closest_pos.y == 1)
+		Tile closest_tile = find_closest_unknown_tile();
+
+		// use the default values of find_unknown_tile()
+		// to determine when we are going home
+		if (closest_tile.x == 1 && closest_tile.y == 1)
 			is_going_home = true;
-		// generate actions for getting to the position in both
+
+		// generate actions for getting to the destination in both
 		// the y-axis and x-axis
-		int direction = generate_y_actions(closest_pos);
-		generate_x_actions(direction, closest_pos);
+		int direction = generate_y_actions(closest_tile);
+		generate_x_actions(direction, closest_tile);
 	}
 	
-	private int generate_y_actions(Coordinates closest_pos)
+	private int generate_y_actions(Tile destination)
 	{
 		// the direction is used to tell generate_x_actions
 		// which direction we are facing after running this
 		// function, the default is current direction
 		int direction = state.agent_direction;
+
 		// if the destination's y-coordinate is greater than
 		// the agent's, then we must move south
-		if (closest_pos.y > state.agent_y_position)
+		if (destination.y > state.agent_y_position)
 		{
 			direction = MyAgentState.SOUTH;
-			if (state.agent_direction == MyAgentState.EAST) 
-				action_list.add(state.ACTION_TURN_RIGHT);
-			else if (state.agent_direction == MyAgentState.WEST) 
-				action_list.add(state.ACTION_TURN_LEFT);
-			else if (state.agent_direction == MyAgentState.NORTH) 
-			{
-				for (int i = 0; i < 2; i++)
-				{
-					action_list.add(state.ACTION_TURN_LEFT);
-				}
-				
-			}
+			move_south();
 		}
 		// if the destination's y-coordinate is less than
 		// the agent's, then we must move north
-		else if (closest_pos.y < state.agent_y_position)
+		else if (destination.y < state.agent_y_position)
 		{
 			direction = MyAgentState.NORTH;
-			if (state.agent_direction == MyAgentState.EAST) 
-				action_list.add(state.ACTION_TURN_LEFT);
-			else if (state.agent_direction == MyAgentState.WEST) 
-				action_list.add(state.ACTION_TURN_RIGHT);
-			else if (state.agent_direction == MyAgentState.SOUTH) 
-			{
-				for (int i = 0; i < 2; i++)
-					action_list.add(state.ACTION_TURN_LEFT);
-			}
+			move_north();
 		}
 		
 		// add the actions to move forward until we reach the destination's
 		// y position
-		for (int i = 0; i < Math.abs(closest_pos.y - state.agent_y_position); i++)
-			action_list.add(state.ACTION_MOVE_FORWARD);
+		for (int i = 0; i < Math.abs(destination.y - state.agent_y_position); i++)
+			action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 		
 		return direction;
 	}
 	
-	private void generate_x_actions(int direction, Coordinates closest_pos)
+	private void generate_x_actions(int direction, Tile destination)
 	{
 		// if the destination's x-coordinate is greater than
 		// the agent's, then we must move east
-		if (closest_pos.x > state.agent_x_position)
-		{
-			if (direction == MyAgentState.NORTH)
-				action_list.add(state.ACTION_TURN_RIGHT);
-			else if (direction == MyAgentState.SOUTH)
-				action_list.add(state.ACTION_TURN_LEFT);
-			else if (direction == MyAgentState.WEST) 
-			{
-				for (int i = 0; i < 2; i++)
-					action_list.add(state.ACTION_TURN_LEFT);
-			}
-		}
+		if (destination.x > state.agent_x_position)
+			move_east(direction);
 		// if the destination's x-coordinate is greater than
 		// the agent's, then we must move west
-		else if (closest_pos.x < state.agent_x_position) 
-		{
-			if (direction == MyAgentState.NORTH)
-				action_list.add(state.ACTION_TURN_LEFT);
-			else if (direction == MyAgentState.SOUTH)
-				action_list.add(state.ACTION_TURN_RIGHT);
-			else if (direction == MyAgentState.EAST) 
-			{
-				for (int i = 0; i < 2; i++)
-					action_list.add(state.ACTION_TURN_LEFT);
-			}
-		}
+		else if (destination.x < state.agent_x_position) 
+			move_west(direction);
 		
 		// add the actions to move forward until we reach the destination's
 		// x position
-		for (int i = 0; i < Math.abs(closest_pos.x - state.agent_x_position); i++)
-			action_list.add(state.ACTION_MOVE_FORWARD);
+		for (int i = 0; i < Math.abs(destination.x - state.agent_x_position); i++)
+			action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+	}
+
+	private void move_east(int direction)
+	{
+		switch (direction)
+		{
+			case MyAgentState.SOUTH:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+			case MyAgentState.WEST:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+			case MyAgentState.NORTH:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				break;
+		}
+	}
+
+	private void move_west(int direction)
+	{
+		switch (direction)
+		{
+			case MyAgentState.SOUTH:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				break;
+			case MyAgentState.EAST:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+			case MyAgentState.NORTH:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+		}
+	}
+
+	private void move_north()
+	{
+		switch (state.agent_direction)
+		{
+			case MyAgentState.SOUTH:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+			case MyAgentState.WEST:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				break;
+			case MyAgentState.EAST:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+		}
+	}
+
+	private void move_south()
+	{
+		switch (state.agent_direction)
+		{
+			case MyAgentState.NORTH:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+			case MyAgentState.EAST:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				break;
+			case MyAgentState.WEST:
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				break;
+		}
 	}
 	
-	private Coordinates find_closest_unknown_position() 
+	// finds the nearest unknown tile and returns it
+	// if none is found then the home position is returned
+	private Tile find_closest_unknown_tile() 
 	{
-		// min distance is set to the maximum distance that
-		// any of the worlds allow which is 20 in the x-axis
-		// and 20 in the y-axis
-		int min_distance = 20 * 2;
+		int min_distance = 0;
+
 		// set x and y as defaults to the home position
 		int x = 1;
 		int y = 1;
+
 		for (int i = 0; i < state.world.length; i++)
 		{
-			for (int j = 0; j < state.world.length; j++)
+			for (int j = 0; j < state.world[0].length; j++)
 			{
 				if (state.world[i][j] == state.UNKNOWN)
 				{
-					int x_diff = Math.abs(i - state.agent_x_position);
-					int y_diff = Math.abs(j - state.agent_y_position);
+					int x_distance = Math.abs(i - state.agent_x_position);
+					int y_distance = Math.abs(j - state.agent_y_position);
 					
 					// check if the sum of the distance in the y-direction
-					// and x-direction is less than the currently known
-					// minimum distance
-					if (x_diff + y_diff < min_distance)
+					// and x-direction is less than the current minimum distance
+					int distance = x_distance + y_distance;
+
+					if (distance < min_distance || min_distance == 0)
 					{
-						min_distance = x_diff + y_diff;
+						min_distance = distance;
 						x = i;
 						y = j;
 					}
 				}
 			}
 		}
-		return new Coordinates(x, y);
+		return new Tile(x, y);
 	}
 	
+	// picks up an action from the action list and performs it
 	private Action perform_action() 
 	{
-		// pickup an action from the list and perform it
-		int action = action_list.get(0);
-		action_list.remove(0);
-		if (action == state.ACTION_MOVE_FORWARD)
+		Action action = action_list.removeFirst();
+		
+		if (action == LIUVacuumEnvironment.ACTION_MOVE_FORWARD)
 			return move_forward();
-		else if (action == state.ACTION_TURN_RIGHT)
+		else if (action == LIUVacuumEnvironment.ACTION_TURN_RIGHT)
 			return turn_right();
 		else
 			return turn_left();

@@ -103,13 +103,12 @@ class MyAgentProgram implements AgentProgram {
 
 	// Here you can define your variables!
 	public MyAgentState state = new MyAgentState();
-	private LinkedList<Action> actions = new LinkedList<Action>();
+	private LinkedList<Action> action_list = new LinkedList<Action>();
 	private LinkedList<Tile> path = new LinkedList<Tile>();
 	private boolean is_going_home = false;
 	public int iterationCounter = state.world.length * state.world[0].length * 2;
 
-	// A class that is used to be able to return the x
-	// and y positions of a specific tile
+	// A class that is used to store the x and y positions of a specific tile
 	private class Tile {
 		private int x;
 		private int y;
@@ -149,18 +148,21 @@ class MyAgentProgram implements AgentProgram {
 	// takes the first action and executes it
 	private Action perform_action()
 	{
-		Action action = this.actions.removeFirst();
+		Action action = action_list.removeFirst();
 		
-		if (action == LIUVacuumEnvironment.ACTION_TURN_RIGHT) return turn_right();
-		else if (action == LIUVacuumEnvironment.ACTION_TURN_LEFT) return turn_left();
-		else return move_forward();
+		if (action == LIUVacuumEnvironment.ACTION_TURN_RIGHT) 
+			return turn_right();
+		else if (action == LIUVacuumEnvironment.ACTION_TURN_LEFT) 
+			return turn_left();
+		else 
+			return move_forward();
 	}
 
 	// generates actions depending on the location of the
 	// next tile in the path
 	private void generate_actions()
 	{
-		Tile next_tile = this.path.removeFirst();
+		Tile next_tile = path.removeFirst();
 
 		if (next_tile.x > state.agent_x_position)
 			move_east();
@@ -177,20 +179,20 @@ class MyAgentProgram implements AgentProgram {
 		switch (state.agent_direction)
 		{
 			case MyAgentState.SOUTH:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.WEST:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.NORTH:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			default:
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
@@ -200,20 +202,20 @@ class MyAgentProgram implements AgentProgram {
 		switch (state.agent_direction)
 		{
 			case MyAgentState.SOUTH:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.EAST:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.NORTH:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			default:
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
@@ -223,20 +225,20 @@ class MyAgentProgram implements AgentProgram {
 		switch (state.agent_direction)
 		{
 			case MyAgentState.SOUTH:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.WEST:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.EAST:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			default:
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
@@ -246,20 +248,20 @@ class MyAgentProgram implements AgentProgram {
 		switch (state.agent_direction)
 		{
 			case MyAgentState.NORTH:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.EAST:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_RIGHT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			case MyAgentState.WEST:
-				this.actions.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_TURN_LEFT);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 			default:
-				this.actions.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
+				action_list.add(LIUVacuumEnvironment.ACTION_MOVE_FORWARD);
 				break;
 		}
 	}
@@ -286,6 +288,8 @@ class MyAgentProgram implements AgentProgram {
 				for (int dy = -1; dy <= 1; dy++)
 				{
 					Tile neighbor = new Tile(curr_tile.x + dx, curr_tile.y + dy);
+					
+					// do not add corners, walls and already added tiles
 					if (Math.abs(dx) != Math.abs(dy) && !explored.containsKey(neighbor) && state.world[neighbor.x][neighbor.y] != state.WALL)
 					{
 						explored.put(neighbor, curr_tile);
@@ -424,7 +428,7 @@ class MyAgentProgram implements AgentProgram {
 	    state.printWorldDebug();
 
 
-	    // Next action selection based on the percept value
+	    // pritoritize sucking dirt
 	    if (dirt)
 	    {
 	    	System.out.println("DIRT -> choosing SUCK action!");
@@ -432,23 +436,25 @@ class MyAgentProgram implements AgentProgram {
 	    	return LIUVacuumEnvironment.ACTION_SUCK;
 	    }
 		
-		if (is_going_home && home) return NoOpAction.NO_OP;
+		if (is_going_home && home) 
+			return NoOpAction.NO_OP;
 
-		if (this.path.isEmpty() && this.actions.isEmpty())
+		if (path.isEmpty() && action_list.isEmpty())
 		{
-			this.path = find_closest_tiles(state.UNKNOWN);
-			if (this.path == null)
+			path = find_closest_tiles(state.UNKNOWN);
+			if (path == null)
 			{
-				if (home) return NoOpAction.NO_OP;
+				if (home) 
+					return NoOpAction.NO_OP;
 				else 
 				{
-					this.path = find_closest_tiles(state.HOME);
-					this.is_going_home = true;
+					path = find_closest_tiles(state.HOME);
+					is_going_home = true;
 				}
 			}
 		}
 
-		if (this.actions.isEmpty()) 
+		if (action_list.isEmpty()) 
 			generate_actions();
 
 		return perform_action();
