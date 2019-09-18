@@ -28,16 +28,20 @@ The vacuum cleaner has to be completely autonomous.
 
 \section{Data Structures}
 
+Below are the data structures that are being used to solve the two tasks.
+The final data structure path is only used in task 2.
+
 \begin{itemize}
 	\item Tile: A class used to hold the x and y coordinates of a tile.
 	\item action\_list: A LinkedList of Actions (left, right, forward) used by the agent to navigate to the next tile.
 	\item path: A LinkedList that corresponds to how to get from the current tile to the destination tile.
 \end{itemize}
 
-\section{Strategy}
-\subsection{Task 1}
 
-The first task is to suck dirt wherever it is present without any obstacles. This is implemented in the steps given below.
+\section{Task 1}
+
+The first task is to suck dirt wherever it is present without any obstacles. 
+This is implemented in the steps given below.
 \begin{enumerate}
 	\item Specify that the first row and column consists of walls (index 0 in each direction).
 	\item Find the closest unknown tile using the euclidean distance formula.
@@ -48,10 +52,16 @@ The first task is to suck dirt wherever it is present without any obstacles. Thi
 	\item When the goal tile is reached the agent returns to step 2, if no unknown tile is found, then the agent returns to the home position by generating actions similar to step 3.
 	\item When the agent is back at the home position it shuts down.
 \end{enumerate}
+This solution was chosen since we only would need to bump into a wall twice to find the limits of the world and using the euclidean distance
+gives the shortest route from one tile to another.
+However it could be more efficient to for instance search the bottom half of the world first and then search the top half since
+that would reduce the number of tiles that we have to traverse to reach the home position.
+In our case, we usually end up around the bottom right corner which gives the longest path to the home position.
 
-\subsection{Task 2}
+\section{Task 2}
 
-The second task is to also to suck dirt but with obstacles. This is implemented in the steps given below.
+The second task is to also to suck dirt but with obstacles. 
+This is implemented in the steps given below.
 \begin{enumerate}
 	\item Using breadth-first search the agent finds a destination tile and generates a path to that tile consisting of all tiles that must be passed along the way.
 	\item Then it takes the closest tile from the path and generates the necessary actions to get to that tile.
@@ -59,5 +69,8 @@ The second task is to also to suck dirt but with obstacles. This is implemented 
 	\item When the goal tile is reached the agent returns to step 1, if no unknown tile is found, then the agent returns to the home position by specifying in step 1 that it wants to find the home position instead of an unknown position.
 	\item When the home position is reached the agent shuts down.
 \end{enumerate}
+We chose breadth-first search since it is cost effective and because we did not have implement backtracking like depth-first search.
+An improvement over breadth-first search would be to use Djikstra's algorithm and add a cost for turning as well, where a simple left or right turn has a cost
+of 2 and a u-turn has a cost of 3.
 
 \end{document}
