@@ -388,7 +388,7 @@ class MyAgentProgram implements AgentProgram {
 	// if none is found then the home position is returned
 	private Tile find_closest_unknown_tile() 
 	{
-		int min_distance = 0;
+		double min_distance = 0;
 
 		// set x and y as defaults to the home position
 		int x = 1;
@@ -400,12 +400,10 @@ class MyAgentProgram implements AgentProgram {
 			{
 				if (state.world[i][j] == state.UNKNOWN)
 				{
-					int x_distance = Math.abs(i - state.agent_x_position);
-					int y_distance = Math.abs(j - state.agent_y_position);
-					
-					// check if the sum of the distance in the y-direction
-					// and x-direction is less than the current minimum distance
-					int distance = x_distance + y_distance;
+					// calculate the euclidian distance
+					double x_distance = Math.pow(i - state.agent_x_position, 2);
+					double y_distance = Math.pow(j - state.agent_y_position, 2);
+					double distance = Math.sqrt(x_distance + y_distance);
 
 					if (distance < min_distance || min_distance == 0)
 					{

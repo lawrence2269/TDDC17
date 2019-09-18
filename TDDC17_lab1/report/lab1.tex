@@ -1,0 +1,63 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} 
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+	\includegraphics[width=.6\textwidth]{liu-logo.png}\par
+	\vfill
+	{\scshape\Large TDDC17 ARTIFICIAL INTELLIGENCE\par}
+	{\huge\bfseries Lab 1: Intelligent Agents\par}
+	\vspace{1cm}
+	{\large\itshape Robin Andersson (roban591) \\ Lawrence Thanakumar Rajappa (lawra776)\par}
+	\vfill
+	{\large \today\par}
+\end{titlepage}
+
+\section{Aim}
+
+This first lab explains how to implement the concept of intelligent agents. 
+The agent is a Vacuum cleaner which is moving in a square grid. 
+Each tile in that grid is assigned with a state such as clean, dirty or obstacle. 
+The agent can perform basic actions such as moving forward, turning right, turning left and sucking the dirt. 
+The aim of this lab is to write an algorithm to automate the cleaning process. 
+No assumptions regarding the world dimension or the dirt and the obstacles positions can be made. 
+The vacuum cleaner has to be completely autonomous.
+
+\section{Data Structures}
+
+\begin{itemize}
+	\item Tile: A class used to hold the x and y coordinates of a tile.
+	\item action\_list: A LinkedList of Actions (left, right, forward) used by the agent to navigate to the next tile.
+	\item path: A LinkedList that corresponds to how to get from the current tile to the destination tile.
+\end{itemize}
+
+\section{Strategy}
+\subsection{Task 1}
+
+The first task is to suck dirt wherever it is present without any obstacles. This is implemented in the steps given below.
+\begin{enumerate}
+	\item Specify that the first row and column consists of walls (index 0 in each direction).
+	\item Find the closest unknown tile using the euclidean distance formula.
+	\item Generate the necessary actions to get to that tile by first generating the actions for the y-direction and then the x-direction.
+	\item If a tile is dirty then it will be cleaned, otherwise the agent will continue moving toward the goal.
+	\item If the agent is facing south and hits a bump (obstacle) then we know that the south wall is found, so all indexes from that y-position are marked as walls.
+	\item If the agent is facing east and hits a bump (obstacle) then we know that the east wall is found, so all indexes from that x-position are marked as walls.
+	\item When the goal tile is reached the agent returns to step 2, if no unknown tile is found, then the agent returns to the home position by generating actions similar to step 3.
+	\item When the agent is back at the home position it shuts down.
+\end{enumerate}
+
+\subsection{Task 2}
+
+The second task is to also to suck dirt but with obstacles. This is implemented in the steps given below.
+\begin{enumerate}
+	\item Using breadth-first search the agent finds a destination tile and generates a path to that tile consisting of all tiles that must be passed along the way.
+	\item Then it takes the closest tile from the path and generates the necessary actions to get to that tile.
+	\item If a tile is dirty then it will be cleaned, otherwise the agent will continue moving toward the goal.
+	\item When the goal tile is reached the agent returns to step 1, if no unknown tile is found, then the agent returns to the home position by specifying in step 1 that it wants to find the home position instead of an unknown position.
+	\item When the home position is reached the agent shuts down.
+\end{enumerate}
+
+\end{document}
