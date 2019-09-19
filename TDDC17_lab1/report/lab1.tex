@@ -57,6 +57,8 @@ gives the shortest route from one tile to another.
 However it could be more efficient to for instance search the bottom half of the world first and then search the top half since
 that would reduce the number of tiles that we have to traverse to reach the home position.
 In our case, we usually end up around the bottom right corner which gives the longest path to the home position.
+\\
+It is a better solution than the reactive agent since it always cleans up all the dirt, explores the whole map and stops at the home position.
 
 \section{Task 2}
 
@@ -69,6 +71,8 @@ This is implemented in the steps given below.
 	\item When the goal tile is reached the agent returns to step 1, if no unknown tile is found, then the agent returns to the home position by specifying in step 1 that it wants to find the home position instead of an unknown position.
 	\item When the home position is reached the agent shuts down.
 \end{enumerate}
+The improvement of the agent in this task is that we do not add tiles that represent obstacles to our path.
+\\
 We chose breadth-first search since it is cost effective and because we did not have implement backtracking like depth-first search.
 An improvement over breadth-first search would be to use Djikstra's algorithm and add a cost for turning as well, where a simple left or right turn has a cost
 of 2 and a u-turn has a cost of 3.

@@ -1,8 +1,0 @@
-1568034722742	Rename field 'task_list'
-1568038642229	Rename method 'generate_tasks'
-1568038652228	Rename method 'generate_y_tasks'
-1568038681135	Rename method 'generate_x_tasks'
-1568038696982	Rename method 'perform_task'
-1568193097883	Rename local variable 'y_direction'
-1568193106855	Rename local variable 'y_direction'
-1568193118399	Rename local variable 'y_direction'
