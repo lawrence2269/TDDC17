@@ -1,0 +1,59 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} 
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+	\includegraphics[width=.6\textwidth]{liu-logo.png}\par
+	\vfill
+	{\scshape\Large TDDC17 ARTIFICIAL INTELLIGENCE\par}
+	{\huge\bfseries Lab 2: Search\par}
+	\vspace{1cm}
+	{\large\itshape Robin Andersson (roban591) \\ Lawrence Thanakumar Rajappa (lawra776)\par}
+	\vfill
+	{\large \today\par}
+\end{titlepage}
+
+\section{Questions and answers}
+
+\subsection{In the vacuum cleaner domain in part 1, what were the states and actions? What is the branching factor?}
+
+The states are represented by GridPos which in turn is represented by the x and y position of a tile in the world.
+This GridPos can then either represent a clean or a dirty tile.
+The actions that can be performed are: suck dirt and move east, west, south and north.
+The actions give that the branching factor is five.
+
+\subsection{What is the difference between Breadth First Search and Uniform Cost Search in a domain where the cost of each action is 1?}
+
+Since the cost of each action is 1, then the prioritization of the action with the lowest cost of Uniform-Cost Search will
+give be same as the nearest action that Breadth First Search gives.
+This means that there is no difference between the two.
+
+\subsection{ Suppose that $h1$ and $h2$ are admissible heuristics (used in for example A*). Which of the following are also admissible?
+\\a) $(h1+h2)/2$
+\\b) $2h1$
+\\c) $\max(h1,h2)$}
+
+a) This is just the mean of $h1$ and $h2$ which means that it will never exceed $\max(h1, h2)$.
+This is obviously admissible since $h1$ and $h2$ are both admissible, meaning that the mean must be less than the true cost.
+\\
+b) This is not admissible since $2h1$ can exceed $\max(h1, h2)$ which means that it also can exceed the true cost.
+\\
+c) As explained in a) this is admissible since it cannot exceed $h1$ or $h2$ and since both of those are admissible then
+this heuristics must also be less than the true cost.
+
+\subsection{If one would use A* to search for a path to one specific square in the vacuum domain, what could the heuristic $(h)$ be? The cost function $(g)$? Is it an admissible heuristic?}
+
+A heuristic could be the straight-line distance, since it cannot be overestimated. 
+The cost function could be the one for each action that must be performed to reach the goal tile from the initial tile.
+Thus the heuristic can never exceed the cost function since the straigh-line distance is the shortest path between to tiles, meaning that the heuristic is admissible.
+
+\subsection{Draw and explain. 
+Choose your three favorite search algorithms and apply them to any problem domain (it might be a good idea to use a domain where you can identify a good heuristic function). 
+Draw the search tree for them, and explain how they proceed in the searching. 
+Also include the memory usage. 
+You can attach a hand-made drawing.}
+
+\end{document}
