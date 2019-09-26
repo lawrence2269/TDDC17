@@ -1,6 +1,8 @@
 \documentclass[a4paper,10pt]{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx} 
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -18,51 +20,102 @@
 
 \section{Task 2}
 
-\subsection{Questions and Answers}
+\subsection{What is the risk of melt-down in the power plant during a day if no observations have been made? What if there is icy weather?}
 
-\subsubsection{What is the risk of melt-down in the power plant during a day if no observations have been made? What if there is icy weather?}
+The risk of melt-down if no observations have been made is 0.02578, this is done by just monitoring the Meltdown node.
+If there is icy weather then the risk is 0.03472, this is done by changing the IcyWeather node to true and then monitoring the Meltdown node.
 
-The risk of melt-down if no observations have been made is 0.02578.
-If there is icy weather then the risk is 0.03472.
-
-\subsubsection{Suppose that both warning sensors indicate failure. 
+\subsection{Suppose that both warning sensors indicate failure. 
 What is the risk of a meltdown in that case? 
 Compare this result with the risk of a melt-down when there is an actual pump failure and water leak. 
 What is the difference? 
-The answers must be expressed as conditional probabilities of the observed variables, P(Meltdown|...).}
+The answers must be expressed as conditional probabilities of the observed variables, $P(Meltdown | ...)$.}
 
-The risk of a meltdown when both warning sensors indicate failure is P(Meltdown|PumpFailureWarning, WaterLeakWarning) = 0.14535.
-The risk of a meltdown when the failures actually occur is P(Meltdown| PumpFailure, WaterLeak) = 0.20000.
-The difference is P(Meltdown| PumpFailure, WaterLeak) - P(Meltdown|PumpFailureWarning, WaterLeakWarning) = 0.05465.
+The risk of a meltdown when both warning sensors indicate failure is 
+\begin{equation*}
+	P(Meltdown | PumpFailureWarning \wedge WaterLeakWarning) = 0.14535,
+\end{equation*}
+which is acquired by setting both warning nodes to true and then observing the Meltdown node.
+The risk of a meltdown when the failures actually occur is 
+\begin{equation*}
+	P(Meltdown | PumpFailure \wedge WaterLeak) = 0.20000,
+\end{equation*}
+which is acquired by setting both failure nodes to true and then observing the Meltdown node.
+The difference is 
+\begin{align*}
+	&P(Meltdown | PumpFailure \wedge WaterLeak) - 
+	\\
+	&P(Meltdown|PumpFailureWarning \wedge WaterLeakWarning) = 0.05465.
+\end{align*}
 
-\subsubsection{The conditional probabilities for the stochastic variables are often estimated by repeated experiments or observations. 
+\subsection{The conditional probabilities for the stochastic variables are often estimated by repeated experiments or observations. 
 Why is it sometimes very difficult to get accurate numbers for these? 
-What conditional probabilites in the model of the plant do you think are difficult or impossible to estimate? }
+What conditional probabilites in the model of the plant do you think are difficult or impossible to estimate?}
 
-\subsubsection{Assume that the "IcyWeather" variable is changed to a more accurate "Temperature" variable instead (don't change your model). 
+The "IcyWeather" variable is probably hardest to try and estimate since you cannot rely on past data for weather.
+Weather in itself is so inconsistent that if there is icy weather one day it does not mean that the next day will also have icy weather.
+
+\subsection{Assume that the "IcyWeather" variable is changed to a more accurate "Temperature" variable instead (don't change your model). 
 What are the different alternatives for the domain of this variable? 
-What will happen with the probability distribution of P(WaterLeak | Temperature) in each alternative?}
+What will happen with the probability distribution of $P(WaterLeak | Temperature)$ in each alternative?}
+
+To get exactly the same behavior as with the "IcyWeather" variable then the domain for the "Temperature" variable could be "icy temperature" or "normal temperature",
+instead of "true" and "false".
+In this case the probability distribution will be the same since the probability for "icy temperature" will be the same as the probability of "IcyWeather"'s "true" and
+the same goes for "normal temperature" and "false".
+
+\subsection{What does a probability table in a Bayesian network represent?}
+
+The table represents the conditional distributions
+
+\subsection{What is a joint probability distribution? 
+Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of 
+$P(child|parent)$ expressions, calculate manually the particular entry in the joint distribution of 
+P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, WaterLeak=F, IcyWeather=F). 
+Is this a common state for the nuclear plant to be in?}
+
+Joint probability calculates the likelihood of two events occurring together and at the same point in time. 
+\begin{align*}
+	P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, \\ WaterLeak=F, IcyWeather=F) = \\
+	P(\neg Meltdown, \neg PumpFailureWarning, \neg PumpFailure, \neg WaterLeakWaring, \neg WaterLeak, \neg IcyWeather)
+\end{align*}
+
+\subsection{What is the probability of a meltdown if you know that there is both a water leak and a pump failure? 
+Would knowing the state of any other variable matter? 
+Explain your reasoning!}
+
+\subsection{Calculate manually the probability of a meltdown when you happen to know that 
+PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you are not really sure about a pump failure.}
 
 \section{Task 3}
 
-\subsection{Questions and Answers}
 
-\subsubsection{During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo.
+\subsection{During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo.
  To everyone's disappointment, it doesn't work. 
  How did the owner's chances of surviving the day change after this observation?}
 
- If we do not know if the radio is working then the probability of the owner surviving is P(Survives) = 0.99001.
- If the radio is not working then the probability of the owner surviving is P(Survives) = 0.98116.
- The owner's chance of surviving decreased by 0.00885.
+ If we do not know if the radio is working then the probability of the owner surviving is 0.99010, this is achieved by just observing the "Survives" variable.
+ If the radio is not working then the probability of the owner surviving is 0.98116, this is achieved by setting the "Radio" variable to "false" and
+ then observing the "Survives" variable.
+ The owner's chance of surviving decreased by 
+ \begin{equation*}
+	0.99010 - 0.98116 = 0.00885.
+ \end{equation*} 
 
- \subsubsection{How does the bicycle change the owner's chances of survival?}
+ \subsection{How does the bicycle change the owner's chances of survival?}
 
- The chance that the owner survives when it owns a bike as well is P(survives) = 0.99505.
- The owner's chance of surviving increased by 0.00504 compared to when he did not own the bike.
+ The chance that the owner survives when it owns a bike as well is 0.99505, which is achieved by just observing the "Survives" variable after adding the
+ "BicycleWorks" variable.
+ The owner's chance of surviving increased by 
+ \begin{equation*}
+	0.99505 - 0.99010 = 0.00495,
+ \end{equation*} compared to when he did not own the bike.
 
- \subsubsection{It is possible to model any function in propositional logic with Bayesian Networks. 
+ \subsection{It is possible to model any function in propositional logic with Bayesian Networks. 
  What does this fact say about the complexity of exact inference in Bayesian Networks? 
  What alternatives are there to exact inference? }
+
+
 
  
 
