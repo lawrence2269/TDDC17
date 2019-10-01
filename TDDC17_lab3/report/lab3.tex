@@ -71,24 +71,46 @@ The table represents the conditional distributions
 \subsection{What is a joint probability distribution? 
 Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of 
 $P(child|parent)$ expressions, calculate manually the particular entry in the joint distribution of 
-P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, WaterLeak=F, IcyWeather=F). 
+P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWarning=F, WaterLeak=F, IcyWeather=F). 
 Is this a common state for the nuclear plant to be in?}
 
 Joint probability calculates the likelihood of two events occurring together and at the same point in time. 
 \begin{align*}
-	P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWaring=F, \\ WaterLeak=F, IcyWeather=F) = \\
-	P(\neg Meltdown, \neg PumpFailureWarning, \neg PumpFailure, \neg WaterLeakWaring, \neg WaterLeak, \neg IcyWeather)
+	P(\neg Meltdown, \neg PumpFailureWarning, \neg PumpFailure, \neg WaterLeakWarning, \neg WaterLeak, \neg IcyWeather) = \\
+	P(\neg Meltdown | \neg PumpFailure \wedge \neg WaterLeak) * P(\neg PumpFailureWarning | \neg PumpFailure) * P(\neg PumpFailure) \\ 
+	* P(\neg WaterLeakWarning | \neg WaterLeak) * P(\neg WaterLeak | \neg IcyWeather) * P(\neg IcyWeather) = \\
+	0.999 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 = 0.69378
 \end{align*}
 
 \subsection{What is the probability of a meltdown if you know that there is both a water leak and a pump failure? 
 Would knowing the state of any other variable matter? 
 Explain your reasoning!}
 
+Since the probability is given by the following probability function:
+\begin{align*}
+	P(Meltdown | PumpFailure \wedge WaterLeak) = 0.2
+\end{align*}
+then we do not to know the state of any other variable.
+However if the probability would be given by
+\begin{align*}
+	P(Meltdown, PumpFailure, WaterLeak) = P(Meltdown | PumpFailure \wedge WaterLeak)
+\end{align*}
+then we would need to know the state of the "IcyWeather" variable.
+
 \subsection{Calculate manually the probability of a meltdown when you happen to know that 
 PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you are not really sure about a pump failure.}
 
-\section{Task 3}
+\begin{align*}
+	P(Meltdown, \neg PumpFailureWarning, \neg WaterLeak, \neg WaterLeakWarning, \neg IcyWeather, \neg PumpFailure) + \\
+	P(Meltdown, \neg PumpFailureWarning, \neg WaterLeak, \neg WaterLeakWarning, \neg IcyWeather, PumpFailure) =  \\
+	[P(\neg Meltdown | \neg PumpFailure \wedge \neg WaterLeak) * P(\neg PumpFailureWarning | \neg PumpFailure) * P(\neg PumpFailure) \\ 
+	* P(\neg WaterLeakWarning | \neg WaterLeak) * P(\neg WaterLeak | \neg IcyWeather) * P(\neg IcyWeather)] + \\
+	[P(\neg Meltdown | PumpFailure \wedge \neg WaterLeak) * P(\neg PumpFailureWarning | PumpFailure) * P(PumpFailure) \\ 
+	* P(\neg WaterLeakWarning | \neg WaterLeak) * P(\neg WaterLeak | \neg IcyWeather) * P(\neg IcyWeather)] = \\
+	0.001895
+\end{align*}
 
+\section{Task 3}
 
 \subsection{During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo.
  To everyone's disappointment, it doesn't work. 
@@ -113,10 +135,31 @@ PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you a
 
  \subsection{It is possible to model any function in propositional logic with Bayesian Networks. 
  What does this fact say about the complexity of exact inference in Bayesian Networks? 
- What alternatives are there to exact inference? }
+ What alternatives are there to exact inference?}
 
+ \section{Task 4}
 
+ \subsection{The owner had an idea that instead of employing a safety person, to replace the pump with a better one. 
+ Is it possible, in your model, to compensate for the lack of Mr H.S.'s expertise with a better pump?}
 
- 
+ Yes since a better pump could reduce the probability of "PumpFailure" which also reduces the need for Mr H.S.'s expertise. 
+
+ \subsection{Mr H.S. fell asleep on one of the plant's couches. 
+ When he wakes up he hears someone scream: "There is one or more warning signals beeping in your control room!". 
+ Mr H.S. realizes that he does not have time to fix the error before it is to late (we can assume that he wasn't in the control room at all). 
+ What is the chance of survival for Mr H.S. if he has a car with the same properties as the owner?}
+
+ Mr H.S.'s chance of survival is 0.61280.
+
+ \subsection{What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
+
+ We always assume that the person is healthy, but it is possible that the person is sick or just feeling unwell which may affect the chance of survival. 
+
+\subsection{Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. 
+You only have to consider a limited sequence of days.}
+
+We could add a node that connect to "IcyWeather" and which represent the previous day's weather.
+This could also be done for several days.
+Then the probability for today's "IcyWeather" will be higher if the previous days had "IcyWeather".
 
 \end{document}
