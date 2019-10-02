@@ -1,5 +1,6 @@
 \documentclass[a4paper,10pt]{article}
-\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[a4paper, total={7in, 8in}]{geometry}
+\setlength\parindent{0pt}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx} 
 \usepackage{amsmath}
@@ -18,14 +19,14 @@
 	{\large \today\par}
 \end{titlepage}
 
-\section{Task 2}
+\section*{Task 2}
 
-\subsection{What is the risk of melt-down in the power plant during a day if no observations have been made? What if there is icy weather?}
+\textbf{5a. What is the risk of melt-down in the power plant during a day if no observations have been made? What if there is icy weather?}
 
 The risk of melt-down if no observations have been made is 0.02578, this is done by just monitoring the Meltdown node.
 If there is icy weather then the risk is 0.03472, this is done by changing the IcyWeather node to true and then monitoring the Meltdown node.
 
-\subsection{Suppose that both warning sensors indicate failure. 
+\textbf{5b. Suppose that both warning sensors indicate failure. 
 What is the risk of a meltdown in that case? 
 Compare this result with the risk of a melt-down when there is an actual pump failure and water leak. 
 What is the difference? 
@@ -48,14 +49,14 @@ The difference is
 	&P(Meltdown|PumpFailureWarning \wedge WaterLeakWarning) = 0.05465.
 \end{align*}
 
-\subsection{The conditional probabilities for the stochastic variables are often estimated by repeated experiments or observations. 
+\textbf{5c. The conditional probabilities for the stochastic variables are often estimated by repeated experiments or observations. 
 Why is it sometimes very difficult to get accurate numbers for these? 
 What conditional probabilites in the model of the plant do you think are difficult or impossible to estimate?}
 
 The "IcyWeather" variable is probably hardest to try and estimate since you cannot rely on past data for weather.
 Weather in itself is so inconsistent that if there is icy weather one day it does not mean that the next day will also have icy weather.
 
-\subsection{Assume that the "IcyWeather" variable is changed to a more accurate "Temperature" variable instead (don't change your model). 
+\textbf{5d. Assume that the "IcyWeather" variable is changed to a more accurate "Temperature" variable instead (don't change your model). 
 What are the different alternatives for the domain of this variable? 
 What will happen with the probability distribution of $P(WaterLeak | Temperature)$ in each alternative?}
 
@@ -64,55 +65,122 @@ instead of "true" and "false".
 In this case the probability distribution will be the same since the probability for "icy temperature" will be the same as the probability of "IcyWeather"'s "true" and
 the same goes for "normal temperature" and "false".
 
-\subsection{What does a probability table in a Bayesian network represent?}
+\textbf{6a. What does a probability table in a Bayesian network represent?}
 
-The table represents the conditional distributions
+The table represents conditional probabilities for a given node
+with regards to the its parent nodes' values.
 
-\subsection{What is a joint probability distribution? 
+\textbf{6b. What is a joint probability distribution? 
 Using the chain rule on the structure of the Bayesian network to rewrite the joint distribution as a product of 
 $P(child|parent)$ expressions, calculate manually the particular entry in the joint distribution of 
 P(Meltdown=F, PumpFailureWarning=F, PumpFailure=F, WaterLeakWarning=F, WaterLeak=F, IcyWeather=F). 
 Is this a common state for the nuclear plant to be in?}
 
 Joint probability calculates the likelihood of two events occurring together and at the same point in time. 
-\begin{align*}
-	P(\neg Meltdown, \neg PumpFailureWarning, \neg PumpFailure, \neg WaterLeakWarning, \neg WaterLeak, \neg IcyWeather) = \\
-	P(\neg Meltdown | \neg PumpFailure \wedge \neg WaterLeak) * P(\neg PumpFailureWarning | \neg PumpFailure) * P(\neg PumpFailure) \\ 
-	* P(\neg WaterLeakWarning | \neg WaterLeak) * P(\neg WaterLeak | \neg IcyWeather) * P(\neg IcyWeather) = \\
+\begin{multline*}
+	P(\neg MeltDown, \neg PumpFailureWarning, \neg PumpFailure, \neg WaterLeakWarning, \\ \neg WaterLeak, \neg IcyWeather) = \\
+	P(\neg MD | \neg PF \wedge \neg WL) * P(\neg PFL | \neg PF) * P(\neg PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) = \\
 	0.999 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 = 0.69378
-\end{align*}
+\end{multline*}
 
-\subsection{What is the probability of a meltdown if you know that there is both a water leak and a pump failure? 
+Since the probability is about 69\% it is a common state for the power plant to be in,
+which is reasonable since we do not want power plants to fail.
+
+\textbf{6c. What is the probability of a meltdown if you know that there is both a water leak and a pump failure? 
 Would knowing the state of any other variable matter? 
 Explain your reasoning!}
 
 Since the probability is given by the following probability function:
-\begin{align*}
-	P(Meltdown | PumpFailure \wedge WaterLeak) = 0.2
-\end{align*}
-then we do not to know the state of any other variable.
-However if the probability would be given by
-\begin{align*}
-	P(Meltdown, PumpFailure, WaterLeak) = P(Meltdown | PumpFailure \wedge WaterLeak)
-\end{align*}
-then we would need to know the state of the "IcyWeather" variable.
+\begin{equation*}
+	P(MD | PF \wedge WL) = 0.2
+\end{equation*}
+then we do not to know the state of any other variable since we already know the state of
+the parents.
 
-\subsection{Calculate manually the probability of a meltdown when you happen to know that 
+\textbf{6d. Calculate manually the probability of a meltdown when you happen to know that 
 PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you are not really sure about a pump failure.}
 
-\begin{align*}
-	P(Meltdown, \neg PumpFailureWarning, \neg WaterLeak, \neg WaterLeakWarning, \neg IcyWeather, \neg PumpFailure) + \\
-	P(Meltdown, \neg PumpFailureWarning, \neg WaterLeak, \neg WaterLeakWarning, \neg IcyWeather, PumpFailure) =  \\
-	[P(\neg Meltdown | \neg PumpFailure \wedge \neg WaterLeak) * P(\neg PumpFailureWarning | \neg PumpFailure) * P(\neg PumpFailure) \\ 
-	* P(\neg WaterLeakWarning | \neg WaterLeak) * P(\neg WaterLeak | \neg IcyWeather) * P(\neg IcyWeather)] + \\
-	[P(\neg Meltdown | PumpFailure \wedge \neg WaterLeak) * P(\neg PumpFailureWarning | PumpFailure) * P(PumpFailure) \\ 
-	* P(\neg WaterLeakWarning | \neg WaterLeak) * P(\neg WaterLeak | \neg IcyWeather) * P(\neg IcyWeather)] = \\
-	0.001895
-\end{align*}
+We want to calculate
+\begin{equation*}
+	P(MD | PFW = F, WL = F, WLW = F, IW = F),
+\end{equation*}
 
-\section{Task 3}
+by using exact inference Bayesian Networks we get
 
-\subsection{During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo.
+\begin{multline*}
+	\alpha * P(MD, PFW = F, WL = F, WLW = F, IW = F) \\ = \alpha * \sum_e P(MD, PFW = F, WL = F, WLW = F, IW = F, PF = e)
+\end{multline*}
+
+We start by calculating the probability of "MeltDown" being true
+
+\begin{multline*}
+	\sum_e P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF = e) = \\
+	P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) \\
+	+ P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF).
+\end{multline*}
+
+The first term is then
+\begin{multline*}
+	P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) = \\
+	P(MD | PF \wedge \neg WL) * P(\neg PFW | PF) * P(PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) \\ 
+	= 0.15 * 0.1 * 0.1 * 0.95 * 0.9 * 0.95 = 0.00122
+\end{multline*}
+
+and the second term is
+\begin{multline*}
+	P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) = \\
+	P(MD | \neg PF \wedge \neg WL) * P(\neg PFW | \neg PF) * P(\neg PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) \\
+	= 0.001 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 = 0.00069
+\end{multline*}
+
+added together we get
+\begin{multline}
+	P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) + P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) \\ 
+	= 0.00122 + 0.00069 = 0.00191.
+\end{multline}
+
+Then we can calculate the probability of "MeltDown" being false
+\begin{multline*}
+	\alpha * \sum_e P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF = e) = \\
+	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) + P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF)
+\end{multline*}
+
+The first term is then
+\begin{multline}
+	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) = \\
+	P(\neg MD | PF \wedge \neg WL) * P(\neg PFW | PF) * P(PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) \\
+	= 0.85 * 0.1 * 0.1 * 0.95 * 0.9 * 0.95 = 0.00690
+\end{multline}
+
+and the second term is
+\begin{multline}
+	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) = \\
+	P(\neg MD | \neg PF \wedge \neg WL) * P(\neg PFW | \neg PF) * P(\neg PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) \\
+	= 0.999 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 = 0.68753
+\end{multline}
+
+added together we get
+\begin{multline}
+	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) + P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) \\ 
+	= 0.00690 + 0.68753 = 0.70068.
+\end{multline}
+
+Now we can calculate alpha
+\begin{equation*}
+	\alpha = \frac{1}{0.00191 + 0.70068} = 1.42470.
+\end{equation*}
+
+This gives us
+
+\begin{equation}
+	\alpha * \langle 0.00191, 0.7007\rangle = \langle 0.00271, 0.99729\rangle.
+\end{equation}
+
+Which means that there is a 0.271\% chance of a meltdown.
+
+\section*{Task 3}
+
+\textbf{2a. During the lunch break, the owner tries to show off for his employees by demonstrating the many features of his car stereo.
  To everyone's disappointment, it doesn't work. 
  How did the owner's chances of surviving the day change after this observation?}
 
@@ -124,7 +192,7 @@ PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you a
 	0.99010 - 0.98116 = 0.00885.
  \end{equation*} 
 
- \subsection{How does the bicycle change the owner's chances of survival?}
+ \textbf{2b. How does the bicycle change the owner's chances of survival?}
 
  The chance that the owner survives when it owns a bike as well is 0.99505, which is achieved by just observing the "Survives" variable after adding the
  "BicycleWorks" variable.
@@ -133,29 +201,36 @@ PumpFailureWarning=F, WaterLeak=F, WaterLeakWarning=F and IcyWeather=F but you a
 	0.99505 - 0.99010 = 0.00495,
  \end{equation*} compared to when he did not own the bike.
 
- \subsection{It is possible to model any function in propositional logic with Bayesian Networks. 
+ \textbf{2c. It is possible to model any function in propositional logic with Bayesian Networks. 
  What does this fact say about the complexity of exact inference in Bayesian Networks? 
  What alternatives are there to exact inference?}
 
+ That any function in propositional logic can be modeled with Bayesian Networks says that the
+ complexity of exact inference will be exponential to the width of the network's tree.
+ Therefore will the complexity increase when the functions in the propositional logic
+ become larger. Instead of using exact inference we can thus use approximate inference.
+
  \section{Task 4}
 
- \subsection{The owner had an idea that instead of employing a safety person, to replace the pump with a better one. 
+ \textbf{2a. The owner had an idea that instead of employing a safety person, to replace the pump with a better one. 
  Is it possible, in your model, to compensate for the lack of Mr H.S.'s expertise with a better pump?}
 
- Yes since a better pump could reduce the probability of "PumpFailure" which also reduces the need for Mr H.S.'s expertise. 
+ Yes since a better pump could reduce the probability of "PumpFailureWarning" as 
+ well as "PumpFailure" and consecuently "Meltdown".
+ Which of course reduces the need for Mr H.S.'s expertise. 
 
- \subsection{Mr H.S. fell asleep on one of the plant's couches. 
+ \textbf{2b. Mr H.S. fell asleep on one of the plant's couches. 
  When he wakes up he hears someone scream: "There is one or more warning signals beeping in your control room!". 
  Mr H.S. realizes that he does not have time to fix the error before it is to late (we can assume that he wasn't in the control room at all). 
  What is the chance of survival for Mr H.S. if he has a car with the same properties as the owner?}
 
  Mr H.S.'s chance of survival is 0.61280.
 
- \subsection{What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
+ \textbf{2c. What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
 
  We always assume that the person is healthy, but it is possible that the person is sick or just feeling unwell which may affect the chance of survival. 
 
-\subsection{Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. 
+\textbf{2d. Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. 
 You only have to consider a limited sequence of days.}
 
 We could add a node that connect to "IcyWeather" and which represent the previous day's weather.
