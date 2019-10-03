@@ -134,10 +134,10 @@ and the second term is
 \end{multline*}
 
 added together we get
-\begin{multline}
+\begin{multline*}
 	P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) + P(MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) \\ 
 	= 0.00122 + 0.00069 = 0.00191.
-\end{multline}
+\end{multline*}
 
 Then we can calculate the probability of "MeltDown" being false
 \begin{multline*}
@@ -146,24 +146,24 @@ Then we can calculate the probability of "MeltDown" being false
 \end{multline*}
 
 The first term is then
-\begin{multline}
+\begin{multline*}
 	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) = \\
 	P(\neg MD | PF \wedge \neg WL) * P(\neg PFW | PF) * P(PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) \\
 	= 0.85 * 0.1 * 0.1 * 0.95 * 0.9 * 0.95 = 0.00690
-\end{multline}
+\end{multline*}
 
 and the second term is
-\begin{multline}
+\begin{multline*}
 	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) = \\
 	P(\neg MD | \neg PF \wedge \neg WL) * P(\neg PFW | \neg PF) * P(\neg PF) * P(\neg WLW | \neg WL) * P(\neg WL | \neg IW) * P(\neg IW) \\
 	= 0.999 * 0.95 * 0.9 * 0.95 * 0.9 * 0.95 = 0.68753
-\end{multline}
+\end{multline*}
 
 added together we get
-\begin{multline}
+\begin{multline*}
 	P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, PF) + P(\neg MD, \neg PFW, \neg WLW, \neg WL, \neg IW, \neg PF) \\ 
 	= 0.00690 + 0.68753 = 0.70068.
-\end{multline}
+\end{multline*}
 
 Now we can calculate alpha
 \begin{equation*}
@@ -172,9 +172,9 @@ Now we can calculate alpha
 
 This gives us
 
-\begin{equation}
+\begin{equation*}
 	\alpha * \langle 0.00191, 0.7007\rangle = \langle 0.00271, 0.99729\rangle.
-\end{equation}
+\end{equation*}
 
 Which means that there is a 0.271\% chance of a meltdown.
 
@@ -207,10 +207,10 @@ Which means that there is a 0.271\% chance of a meltdown.
 
  That any function in propositional logic can be modeled with Bayesian Networks says that the
  complexity of exact inference will be exponential to the width of the network's tree.
- Therefore will the complexity increase when the functions in the propositional logic
+ Therefore, the complexity will increase when the functions in the propositional logic
  become larger. Instead of using exact inference we can thus use approximate inference.
 
- \section{Task 4}
+ \section*{Task 4}
 
  \textbf{2a. The owner had an idea that instead of employing a safety person, to replace the pump with a better one. 
  Is it possible, in your model, to compensate for the lack of Mr H.S.'s expertise with a better pump?}
@@ -224,11 +224,14 @@ Which means that there is a 0.271\% chance of a meltdown.
  Mr H.S. realizes that he does not have time to fix the error before it is to late (we can assume that he wasn't in the control room at all). 
  What is the chance of survival for Mr H.S. if he has a car with the same properties as the owner?}
 
- Mr H.S.'s chance of survival is 0.61280.
+ Mr H.S.'s chance of survival is 0.96531.
+ This is done by setting "Sleeping", "Reacts" and "Danger" to true and "FixMeltDown" and "BicycleWorks" to false.
+ The reason that we set these variables to those values is because the problem description says that he is sleeping, but wakes up when someone
+ screams because there is a danger. The bike can obviously not work since he does not own one and he does not have time to fix the meltdown.
 
  \textbf{2c. What unrealistic assumptions do you make when creating a Bayesian Network model of a person?}
 
- We always assume that the person is healthy, but it is possible that the person is sick or just feeling unwell which may affect the chance of survival. 
+ We always assume that the person is healthy, but it is possible that the person is sick or just feeling unwell which may affect its possibility to react.
 
 \textbf{2d. Describe how you would model a more dynamic world where for example the "IcyWeather" is more likely to be true the next day if it was true the day before. 
 You only have to consider a limited sequence of days.}
