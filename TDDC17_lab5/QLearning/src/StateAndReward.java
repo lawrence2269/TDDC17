@@ -1,54 +1,18 @@
 public class StateAndReward {
+    private static final double ANGLE_MAX_VALUE = Math.PI;
+    private static final double ANGLE_MIN_VALUE = -Math.PI;
+    private static final int ANGLE_NR_VALUES = 20;
 
 	
 	/* State discretization function for the angle controller */
 	public static String getStateAngle(double angle, double vx, double vy) {
-
-		/* TODO: IMPLEMENT THIS FUNCTION */
-
-		int nrOfValues = 8;
-
-		// check if north
-		int north = discretize(angle, nrOfValues, -0.75, 0.75);
-		int west = discretize(angle, nrOfValues, -2, -0.75);
-		int south1 = discretize(angle, nrOfValues, -Math.PI, -2);
-		int south2 = discretize(angle, nrOfValues, 2, Math.PI);
-		//int east = discretize(angle, nrOfValues, 0.75, 2);
-		
-		if (nrOfValues-1 > north && north > 0)
-			return "North";
-		else if (nrOfValues-1 > west && west > 0)
-			return "West";
-		else if ((nrOfValues-1 > south1 && south1 > 0) ||
-			(nrOfValues-1 > south2 && south2 > 0))
-			return "South";
-		else
-			return "East";
+	    String state = String.valueOf(discretize(angle, ANGLE_NR_VALUES, ANGLE_MIN_VALUE, ANGLE_MAX_VALUE));
+	    return state;
 	}
 
 	/* Reward function for the angle controller */
 	public static double getRewardAngle(double angle, double vx, double vy) {
-
-		/* TODO: IMPLEMENT THIS FUNCTION */
-
-		int nrOfValues = 8;
-
-		// check if north
-		int north = discretize(angle, nrOfValues, -0.75, 0.75);
-		int west = discretize(angle, nrOfValues, -2, -0.75);
-		int south1 = discretize(angle, nrOfValues, -Math.PI, -2);
-		int south2 = discretize(angle, nrOfValues, 2, Math.PI);
-		//int east = discretize(angle, nrOfValues, 0.75, 2);
-		
-		if (nrOfValues-1 > north && north > 0)
-			return 20;
-		else if (nrOfValues-1 > west && west > 0)
-			return 10;
-		else if ((nrOfValues-1 > south1 && south1 > 0) ||
-			(nrOfValues-1 > south2 && south2 > 0))
-			return 0;
-		else
-			return 10;
+	    return -Math.pow(angle, 2);
 	}
 
 	/* State discretization function for the full hover controller */
