@@ -39,9 +39,9 @@ public class TutorialController extends Controller {
 
     public void tick(int currentTime) {
 		System.out.println("currentTime :" + 
-		"x = " + x.getValue() + ", y = " + y.getValue() + 
-		"\n vx = " + vx.getValue() + ", vy = " + vy.getValue() + 
-		"\n angle = " + angle.getValue());
+		"x = " + Math.round(x.getValue()) + ", y = " + Math.round(y.getValue()) + 
+		"\n vx = " + Math.round(vx.getValue()) + ", vy = " + Math.round(vy.getValue()) + 
+		"\n angle = " + Math.round(angle.getValue()));
 
 		/*
 		if (vy.getValue() > 0)

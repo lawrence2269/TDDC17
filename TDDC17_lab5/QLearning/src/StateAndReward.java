@@ -1,39 +1,56 @@
 public class StateAndReward {
     private static final double ANGLE_MAX_VALUE = Math.PI;
     private static final double ANGLE_MIN_VALUE = -Math.PI;
-    private static final int ANGLE_NR_VALUES = 20;
+    private static final int ANGLE_NR_VALUES = 10;
+
+    private static final int VY_MAX_VALUE = 2;
+    private static final int VY_MIN_VALUE = -2;
+    private static final int VY_NR_VALUES = 2;
+
+    private static final int VX_MAX_VALUE = 10;
+    private static final int VX_MIN_VALUE = -10;
+    private static final int VX_NR_VALUES = 10;
+
+    private static final double HOVER_MAX_VALUE = Math.PI;
+    private static final double HOVER_MIN_VALUE = -Math.PI;
+    private static final int HOVER_NR_VALUES = 100;
 
     /* State discretization function for the angle controller */
     public static String getStateAngle(double angle, double vx, double vy)
     {
-	String state = String.valueOf(discretize(angle,
+	    String state = String.valueOf(discretize2(angle,
 						 ANGLE_NR_VALUES,
 						 ANGLE_MIN_VALUE,
 						 ANGLE_MAX_VALUE));
-	return state;
+	    return state;
     }
 
     /* Reward function for the angle controller */
     public static double getRewardAngle(double angle, double vx, double vy)
     {
-	return -Math.pow(angle, 2);
+	    return Math.PI/Math.abs(angle);
     }
 
     /* State discretization function for the full hover controller */
     public static String getStateHover(double angle, double vx, double vy)
     {
-	/* TODO: IMPLEMENT THIS FUNCTION */
+        /* TODO: IMPLEMENT THIS FUNCTION */
+        String angle_state = "";
+        String vx_state = "";
+        String vy_state = "";
 
-	String state = "OneStateToRuleThemAll2";
-	return state;
+        angle_state = String.valueOf(discretize2(angle, HOVER_NR_VALUES, HOVER_MIN_VALUE, HOVER_MAX_VALUE));
+        vx_state = String.valueOf(discretize(vx, VX_NR_VALUES, VX_MIN_VALUE, VX_MAX_VALUE));
+        vy_state = String.valueOf(discretize(vy, VY_NR_VALUES, VY_MIN_VALUE, VY_MAX_VALUE));          
+
+        return angle_state + vx_state + vy_state;
     }
 
     /* Reward function for the full hover controller */
     public static double getRewardHover(double angle, double vx, double vy)
     {
-	/* TODO: IMPLEMENT THIS FUNCTION */
-	double reward = 0;
-	return reward;
+        /* TODO: IMPLEMENT THIS FUNCTION */
+        return Math.PI/Math.abs(angle) + VX_MAX_VALUE/Math.abs(vx) + VY_MAX_VALUE/Math.abs(vy);
     }
 
     // ///////////////////////////////////////////////////////////
@@ -52,26 +69,26 @@ public class StateAndReward {
     public static int discretize(double value, int nrValues, double min,
 				 double max)
     {
-	if (nrValues < 2)
-	{
-	    return 0;
-	}
+        if (nrValues < 2)
+        {
+            return 0;
+        }
 
-	double diff = max - min;
+        double diff = max - min;
 
-	if (value < min)
-	{
-	    return 0;
-	}
-	if (value > max)
-	{
-	    return nrValues - 1;
-	}
+        if (value < min)
+        {
+            return 0;
+        }
+        if (value > max)
+        {
+            return nrValues - 1;
+        }
 
-	double tempValue = value - min;
-	double ratio = tempValue / diff;
+        double tempValue = value - min;
+        double ratio = tempValue / diff;
 
-	return (int) (ratio * (nrValues - 2)) + 1;
+        return (int) (ratio * (nrValues - 2)) + 1;
     }
 
     // ///////////////////////////////////////////////////////////
@@ -87,20 +104,20 @@ public class StateAndReward {
     public static int discretize2(double value, int nrValues, double min,
 				  double max)
     {
-	double diff = max - min;
+        double diff = max - min;
 
-	if (value < min)
-	{
-	    return 0;
-	}
-	if (value > max)
-	{
-	    return nrValues - 1;
-	}
+        if (value < min)
+        {
+            return 0;
+        }
+        if (value > max)
+        {
+            return nrValues - 1;
+        }
 
-	double tempValue = value - min;
-	double ratio = tempValue / diff;
+        double tempValue = value - min;
+        double ratio = tempValue / diff;
 
-	return (int) (ratio * nrValues);
+        return (int) (ratio * nrValues);
     }
 }

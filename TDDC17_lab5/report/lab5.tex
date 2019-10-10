@@ -1,0 +1,55 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[a4paper, total={7in, 8in}]{geometry}
+\setlength\parindent{0pt}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} 
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+	\includegraphics[width=.6\textwidth]{liu-logo.png}\par
+	\vfill
+	{\scshape\Large TDDC17 ARTIFICIAL INTELLIGENCE\par}
+	{\huge\bfseries Lab 5: Reinforcement Learning\par}
+	\vspace{1cm}
+	{\large\itshape Robin Andersson (roban591) \\ Lawrence Thanakumar Rajappa (lawra776)\par}
+	\vfill
+	{\large \today\par}
+\end{titlepage}
+
+\section{Part 2}
+
+\textbf{1. In the report, 
+a) describe your choices of state and reward functions, and
+b) describe in your own words the purpose of the different components in the Q-learning 
+update that you implemented. In particular, what are the Q-values?}
+
+a)
+The state function is split into ten discrete pieces from angle -$\pi$ to $\pi$. 
+This is done to cover all possible angles that the controller can have.
+The reward function is
+\begin{equation*}
+    \frac{\pi}{|\phi|},
+\end{equation*} 
+where $\phi$ is the current angle of the controller.
+The reason we chose this formula is to make the angles around $\pi$ give as low reward as possible
+and to make angles gain a higher reward the closer they are to zero.
+
+b)
+When we update the Qtable we use the following formula
+\begin{equation*}
+    Q(s, a) = Q(s, a) + \alpha(R(s) + \gamma \max_{a'}Q(s', a') - Q(s,a)),
+\end{equation*}
+where 
+\begin{itemize}
+    \item $Q(s, a)$ represents the Q-value of the previous state and action.
+    \item $\alpha$ is calculated using the N-value of the previous state and action.
+    \item $R(s)$ represents the reward from the previous action.
+    \item $\gamma$ is a constant. 
+    \item $Q(s', a')$ represents the Q-value of the new state and a new action where $a'$
+    is chosen as the action that gives the highest Q-value.
+\end{itemize} 
+
+\end{document}
