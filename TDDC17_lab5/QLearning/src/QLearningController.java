@@ -4,12 +4,6 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Random;
 
-/* TODO: 
- * -Define state and reward functions (StateAndReward.java) suitable for your problem 
- * -Define actions
- * -Implement missing parts of Q-learning
- * -Tune state and reward function, and parameters below if the result is not satisfactory */
-
 public class QLearningController extends Controller {
 	
 	/* These are the agents senses (inputs) */
@@ -24,7 +18,7 @@ public class QLearningController extends Controller {
 	RocketEngine middleEngine;
 	RocketEngine rightEngine;
 
-	final static int NUM_ACTIONS = 4; /* The takeAction function must be changed if this is modified */
+	final static int NUM_ACTIONS = 5; /* The takeAction function must be changed if this is modified */
 	
 	/* Keep track of the previous state and action */
 	String previous_state = null;
@@ -84,15 +78,31 @@ public class QLearningController extends Controller {
 
 	/* Performs the chosen action */
 	void performAction(int action) {
-	    resetRockets();
-	    if (action == 0) // do nothing
-			;
-	    else if (action == 1) // turn right
-			rightEngine.setBursting(true);
-	    else if (action == 2) // turn left
-			leftEngine.setBursting(true);
-	    else if (action == 3) // move up
-			middleEngine.setBursting(true);
+		resetRockets();
+		switch(action)
+		{
+			case 0:
+				// turn right
+				rightEngine.setBursting(true);
+				break;
+			case 1:
+				// turn left
+				leftEngine.setBursting(true);
+				break;
+			case 2:
+				// move up
+				middleEngine.setBursting(true);
+				break;
+			case 3:
+				// Fire zeh rockets!!!
+				rightEngine.setBursting(true);
+				leftEngine.setBursting(true);
+				middleEngine.setBursting(true);
+			default:
+				// do nothing
+				break;
+		}
+			
 	}
 
 	/* Main decision loop. Called every iteration by the simulator */
@@ -127,9 +137,6 @@ public class QLearningController extends Controller {
 				if (Qtable.get(prev_stateaction) == null) {
 					Qtable.put(prev_stateaction, 0.0);
 				} 
-
-				
-				/* TODO: IMPLEMENT Q-UPDATE HERE! */
 				
 				/* See top for constants and below for helper functions */
 				Qtable.put(prev_stateaction,
