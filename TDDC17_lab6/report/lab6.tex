@@ -18,4 +18,29 @@
 	{\large \today\par}
 \end{titlepage}
 
+\section*{Part 3}
+
+\textbf{Q3. Here you will evaluate different mini-bach sizes for stochastic gradient descent (see the deep learning lecture). 
+Please separately run the training code above with batch sizes of 1, 10, 100, 1000 and 60000. 
+Write down the training times (you can use the first number in seconds, not the per sample time) and 
+the training set accuracy reached, both in the first line of the output. 
+This can randomly vary a bit between runs but it should give you an idea. 
+In your lab report, plot both curves and reason about which batch size produced the most accuracy 
+given the time spent, i.e. which batch size would be best to start the training with? 
+You have to run the Reset All Parameters code above this one between your runs to always start over.}
+
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		 \textbf{Batch Size} & \textbf{Time Duration in (seconds)} & \textbf{Accuracy} &\textbf{Loss}\\ [0.5ex]
+		\hline
+		1 & 114s &0.8110 &0.5302\\
+		\hline
+		10 & 13s &0.8263 &0.4786\\
+		\hline
+	\end{tabular}
+\end{center}
+
+
 \end{document}
