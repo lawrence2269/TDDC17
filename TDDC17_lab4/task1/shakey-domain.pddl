@@ -13,7 +13,7 @@
 		room 			; there are several connected rooms
 		shakey 			; the robot
 		object 			; small objects that can be lifted by robot
-		gripper			; his both hands
+		gripper			; one of the hands
 	)
 
 	;; The predicates we have chosen are what we need for the actions.

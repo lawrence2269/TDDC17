@@ -1,0 +1,57 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[a4paper, total={7in, 8in}]{geometry}
+\setlength\parindent{0pt}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} 
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+	\includegraphics[width=.6\textwidth]{liu-logo.png}\par
+	\vfill
+	{\scshape\Large TDDC17 ARTIFICIAL INTELLIGENCE\par}
+	{\huge\bfseries Lab 3: Bayesian Networks\par}
+	\vspace{1cm}
+	{\large\itshape Robin Andersson (roban591) \\ Lawrence Thanakumar Rajappa (lawra776)\par}
+	\vfill
+	{\large \today\par}
+\end{titlepage}
+
+\section*{Task 1}
+
+We have chosen to model Shakey's domain.
+In the domain we have the following six different objects:
+\begin{itemize}
+    \item \textbf{box}: a box that Shakey can push between connected rooms.
+    \item \textbf{switch}: a light switch that can be turned on or off.
+    \item \textbf{room}: a room where a light switch, object, box or Shakey can be.
+    \item \textbf{shakey}: Shakey the robot.
+    \item \textbf{object}: a small object that Shakey can hold.
+    \item \textbf{gripper}: a gripper that Shakey can use to hold a small object.
+\end{itemize}
+We also have the following nine predicates:
+\begin{itemize}
+    \item \textbf{adjacent}: specifies wether two rooms are connected.
+    \item \textbf{wide-entrance}: specifies wether the two rooms that are connected have a wide door.
+    \item \textbf{box-at}: specifies if a specific box is in a specific room.
+    \item \textbf{shakey-at}: specifies if Shakey is in a specific room.
+    \item \textbf{switch-at}: specifies if a specific light switch is in a specific room.
+    \item \textbf{object-at}: specifies if a specific small object is in a specific room.
+    \item \textbf{light}: specifies wether a specific room is lit.
+    \item \textbf{holding}: specifies if a specific gripper holds a specific small object.
+    \item \textbf{empty}: specifies if a specific gripper is not holding anything.
+\end{itemize}
+Finally we have the following seven actions:
+\begin{itemize}
+    \item \textbf{move}: moves Shakey from one room to another if Shakey is in the first room and there is a door between the rooms.
+    \item \textbf{lights-on}: Shakey turns on the lights in a room if there is a box and a light switch in the room.
+    \item \textbf{turn-light-off}: Shakey turns the lights off in a room if there is a box and a light switch in the room.
+    \item \textbf{move-box}: Shakey moves a box from one room to another.
+    \item \textbf{pick-up}: Shakey picks up a small object in one of its grippers.
+    \item \textbf{put-down}: Shakey puts down a small object from one of its grippers.
+\end{itemize}
+
+
+\end{document}
