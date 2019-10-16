@@ -29,16 +29,14 @@ update that you implemented. In particular, what are the Q-values?}
 a)
 The state function is split into ten discrete pieces from angles below -2 to angles above 2.
 The different states the engines can be in are: none active, left active, right active, middle active and all active.
-This is done to cover all possible angles that the controller can have.
 The reward function gives a zero when the angle is above 2 and below -2,
-otherwise the following equation is used
+otherwise the following equation is used:
 \begin{equation}
-    \label{eq:reward}
-    (1 - \frac{|\phi|}{K})^2 * K
+  \left(1 - \frac{|\phi|}{K}\right)^2 * K \label{eq:reward}
 \end{equation} 
 where $\phi$ is the current angle of the controller and $K$ is the maximum angle that we use for the discretization.
-The reason we chose this formula is to make the angles around $\pi$ give as low reward as possible
-and to make angles gain a higher reward the closer they are to zero.
+The reason we chose this formula is to make the angles around zero give a high reward and to make it just ignore angles
+that are nowhere near 0.
 
 b)
 When we update the Qtable we use the following formula
@@ -54,17 +52,22 @@ where
     \item $Q(s', a')$ represents the Q-value of the new state and a new action where $a'$
     is chosen as the action that gives the highest Q-value.
 \end{itemize}
+The Q-values are used by the agent to decide which action to take next and the action that is chosen is the
+one with the highest Q-value. The Q-value thus tells the agent which action will yield the highest reward.
 
 \textbf{2. Try turning off exploration from the start before learning.
   What tends to happen? Explain why this happens in your report.}
 
 The rocket tends to spin in a circle while falling down.
+This is because it does not have a complete Qtable that tells it what to do to get a high reward.
+Therefore it tries to get a high reward which it does ocassionaly when the angle is close to zero.
 
 \section*{Part 3}
 
 The angle controller is the same as in part 2.
 The vy controller is split into 8 discrete states from below -2 to above 2.
 The vx controller is split into 4 discrete states from below -2 to above 2.
-The reward function is the sum of \ref{eq:reward} for all of the different controllers.
+The reward function is the sum of equation \eqref{eq:reward} for all of the different controllers where $\phi$ now is
+the value of vx and vy respectively and $K$ is the maximum value of vx and vy respectively.
 
 \end{document}
