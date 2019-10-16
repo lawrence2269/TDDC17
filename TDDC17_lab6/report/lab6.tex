@@ -51,7 +51,7 @@
 \textbf{Q1. In the gradient descent learning code below, please complete the gradient computation by inputing the
 correct variables where there are question marks.We are using Tensorflow to automatically compute the gradient with
 GradientTape (tape) similar to how you were taught above, but to do supervised learning which tensorflow node do
-we compute the gradient of, and with regard to which variable? Please fill this in below.} \\
+we compute the gradient of, and with regard to which variable? Please fill this in below.}
 
 \begin{lstlisting}
 tf.print("Loss before training:", training_loss(parameters))
@@ -78,19 +78,21 @@ _ = plt.ylim([0,50])
 
 \section*{Part 3}
 
-\textbf{Q2. Show the math for why the first Dense layer has 100,480 parameters with these inputs and number of neurons}\\
+\textbf{Q2. Show the math for why the first Dense layer has 100 480 parameters with these inputs and number of neurons}
 
 The input for the first layer is (28,28) and number of neurons in the dense(hidden) layer is 128 neurons,
 Number of biases for hidden layer is 128 neurons, hence
 \begin{center}
-		\justifying
-		A = Number of inputs\\
-		B = Number of Neurons in the hidden layer\\
-		C = Number of biases for hidden layer\\
-		\begin{equation*}
-		(A * B) + C = (28*28*128)+128 = 100,480 \,\,\, Parameters
-		\end{equation*}
+	\begin{tabular}{l}
+		$A$ = Number of inputs \\
+		$B$ = Number of Neurons in the hidden layer \\
+		$C$ = Number of biases for hidden layer \\
+	\end{tabular}
 \end{center}
+\begin{equation*}
+	(A * B) + C = (28*28*128)+128 = 100~480~\text{Parameters}
+\end{equation*}
+
 
 \textbf{Q3. Here you will evaluate different mini-bach sizes for stochastic gradient descent (see the deep learning lecture). 
 Please separately run the training code above with batch sizes of 1, 10, 100, 1000 and 60000. 
@@ -98,7 +100,7 @@ Write down the training times (you can use the first number in seconds, not the 
 the training set accuracy reached, both in the first line of the output. 
 This can randomly vary a bit between runs but it should give you an idea. 
 In your lab report, plot both curves and reason about which batch size produced the most accuracy 
-given the time spent, i.e. which batch size would be best to start the training with?} \\
+given the time spent, i.e. which batch size would be best to start the training with?}
 
 Please find the table below with batch size, duration and accuracy,
 \begin{center}
@@ -123,9 +125,9 @@ Please find the table below with batch size, duration and accuracy,
 	\setlength{\arrayrulewidth}{1.0pt}
 	\begin{tabular}{|c|c|}
 		\hline
-		\includegraphics[width=.6\textwidth]{Batch_Size_Accuracy.png}\par\\
+		\includegraphics[width=.5\textwidth]{Batch_Size_Accuracy.png}\\
 		\hline
-		\includegraphics[width=.6\textwidth]{Batch_Size_Time.png}\par\\
+		\includegraphics[width=.5\textwidth]{Batch_Size_Time.png}\\
 		\hline
 	\end{tabular}
 \end{center}
@@ -134,7 +136,7 @@ It is better to use batch size of 10 which has good accuracy than other batch si
 Moreover,batch size has an important role in optimization technique because parallelization of stochastic gradient descent
 in deep learning is limited, if we use small batch size. In order to solve this, we are using large batch size. When using
 batch size of 10, the usage of memory is less during training and also networks train faster using mini batches because
-we update weights after each propagation. But sometime you could ask, why not batch size = '1', using this batch size and calculating
+we update weights after each propagation. But sometime you could ask, why not use a batch size of 1? Using this batch size and calculating
 gradient descent for the entire dataset takes lot of memory to process and gradient trajectory lands in the bad spot i.e. saddle point.
 Hence, considering the above points, it is better to use 10 as the batch size with respect to this dataset.
 
