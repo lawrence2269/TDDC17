@@ -1,22 +1,21 @@
 public class StateAndReward {
     private static final double ANGLE_MAX_VALUE = 2;
-    private static final int ANGLE_NR_VALUES = 20;
+    private static final int ANGLE_NR_VALUES = 10;
 
-    private static final int VY_MAX_VALUE = 2;
-    private static final int VY_NR_VALUES = 2;
+    private static final double VY_MAX_VALUE = 2;
+    private static final int VY_NR_VALUES = 8;
 
-    private static final int VX_MAX_VALUE = 1;
+    private static final double VX_MAX_VALUE = 2;
     private static final int VX_NR_VALUES = 4;
-
 
     /* State discretization function for the angle controller */
     public static String getStateAngle(double angle, double vx, double vy)
     {
-	    String state = String.valueOf(discretize(angle,
-						 ANGLE_NR_VALUES,
-						 -ANGLE_MAX_VALUE,
-						 ANGLE_MAX_VALUE));
-	    return state;
+        String state = "";
+
+        state = String.valueOf(discretize(angle, ANGLE_NR_VALUES, -ANGLE_MAX_VALUE, ANGLE_MAX_VALUE));
+        
+        return state;
     }
 
     /* Reward function for the angle controller */
@@ -49,11 +48,12 @@ public class StateAndReward {
         return angle_reward + vx_reward + vy_reward;
     }
 
+    /* Calculates a reward using the current controller value and its maximum value */
     private static double getReward(double value, double max_value)
     {
         if (Math.abs(value) > max_value)
             return 0;
-        return Math.pow(max_value - Math.abs(value), 2) * 20;
+        return Math.pow(1 - Math.abs(value)/max_value, 2) * max_value;
     }
 
     // ///////////////////////////////////////////////////////////

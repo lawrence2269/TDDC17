@@ -43,7 +43,7 @@ public class TutorialController extends Controller {
 		"\n vx = " + Math.round(vx.getValue()) + ", vy = " + Math.round(vy.getValue()) + 
 		"\n angle = " + Math.round(angle.getValue()));
 
-		/*
+		
 		if (vy.getValue() > 0)
 		{
 			rightRocket.setBursting(true);
@@ -54,7 +54,7 @@ public class TutorialController extends Controller {
 			rightRocket.setBursting(false);
 			leftRocket.setBursting(false);
 			middleRocket.setBursting(false);
-		}*/
+		}
     }
 
 }
