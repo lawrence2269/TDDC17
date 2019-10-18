@@ -1,5 +1,4 @@
 ;; This is the domain for shakey
-
 (define (domain shakey)
 	(:requirements 
 		:strips
